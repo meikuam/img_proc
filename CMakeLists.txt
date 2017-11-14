@@ -20,12 +20,10 @@ set(SOURCES
     main.cpp
     mainwindow.cpp
     messagewindow.cpp
-    imageviewer.cpp
 )
 set(HEADERS
     mainwindow.h
     messagewindow.h
-    imageviewer.h
 )
 qt5_wrap_ui(UIS_HDRS
     mainwindow.ui

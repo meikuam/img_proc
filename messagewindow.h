@@ -18,7 +18,14 @@ public:
     int value;
 
 private slots:
-    void on_verticalSlider_valueChanged(int value);
+
+    void on_applyButton_clicked();
+
+    void on_cancelButton_clicked();
+
+    void on_valueSlider_valueChanged(int value);
+
+    void on_valueEdit_textChanged(const QString &arg1);
 
 private:
     Ui::MessageWindow *ui;
