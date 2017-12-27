@@ -15,13 +15,6 @@ MessageWindow::MessageWindow(QImage &newImage, int value, QWidget *parent) :
     ui->valueSlider->setValue(value);
 
     img = newImage;
-
-//    ui->label->setBackgroundRole(QPalette::Base);
-//    ui->label->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
-//    ui->horizontalLayout->SetMinimumSize = 1;
-    ui->label->setScaledContents(true);
-    ui->label->setPixmap(QPixmap::fromImage(img));
-    ui->label->adjustSize();
 }
 
 MessageWindow::~MessageWindow()

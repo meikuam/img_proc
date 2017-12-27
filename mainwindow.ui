@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>680</width>
-    <height>403</height>
+    <width>813</width>
+    <height>542</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,22 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0" colspan="3">
+    <property name="leftMargin">
+     <number>0</number>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <property name="spacing">
+     <number>0</number>
+    </property>
+    <item row="1" column="0">
      <widget class="QGroupBox" name="imageGroupBox">
       <property name="title">
        <string>image</string>
@@ -42,20 +57,13 @@
        <property name="spacing">
         <number>0</number>
        </property>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QScrollBar" name="horizontalScrollBar">
          <property name="enabled">
           <bool>true</bool>
          </property>
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QScrollBar" name="verticalScrollBar">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
          </property>
         </widget>
        </item>
@@ -87,6 +95,13 @@
          </property>
         </widget>
        </item>
+       <item row="0" column="1">
+        <widget class="QScrollBar" name="verticalScrollBar">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+        </widget>
+       </item>
       </layout>
      </widget>
     </item>
@@ -97,7 +112,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>680</width>
+     <width>813</width>
      <height>22</height>
     </rect>
    </property>
@@ -166,7 +181,7 @@
           <x>0</x>
           <y>0</y>
           <width>274</width>
-          <height>274</height>
+          <height>413</height>
          </rect>
         </property>
         <attribute name="label">

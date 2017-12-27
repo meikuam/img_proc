@@ -87,11 +87,6 @@ void MainWindow::on_openFile_Clicked() {
 //    ui->debugLabel->setText("openFile");
 }
 
-
-//void MainWindow resizeEvent(QResizeEvent *event) {
-
-//}
-
 void MainWindow::on_saveFile_Clicked() {
     debugLabel->setText("saveFile");
 }
@@ -164,13 +159,9 @@ void MainWindow::on_pushButton_clicked()
     }
 }
 
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-   QMainWindow::resizeEvent(event);
+//void MainWindow::resizeEvent(QResizeEvent* event)
+//{
+//   QMainWindow::resizeEvent(event);
 
-   ui->imageLabel->resize(ui->imageGroupBox->width(), ui->imageGroupBox->height());
-   //    ui->imageLabel->setMaximumWidth(ui->imageGroupBox->width());
-
-   qDebug()<<"MainWindow::resizeEvent";
-   // Your code here.
-}
+//   // Your code here.
+//}

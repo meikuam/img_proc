@@ -26,8 +26,8 @@ public:
     Q_SLOT
     void onVerticalSliderMoved(int value);
 
-//    Q_SLOT
-//    void resizeEvent(QResizeEvent* event);
+    Q_SLOT
+    void resizeEvent(QResizeEvent* event);
 
     Q_SIGNAL
     void verticalSliderMoved(int value);
@@ -36,10 +36,17 @@ public:
 
     void setImage(QImage &img);
 private:
+    void repaint();
+
     QImage img;
     double scale = 1.0;
-    int left_up_x = 0,
-        left_ip_y = 0;
+    int x_pix, w_pix,
+            y_pix, h_pix;
+
+    int w_orig,
+        h_orig;
+    int w_win,
+        h_win;
 //     void paintEvent(QPaintEvent *)
 };
 #endif // IMAGELABEL_H

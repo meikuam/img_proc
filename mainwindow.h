@@ -13,10 +13,6 @@ class MainWindow;
 class ImageLabel;
 }
 
-
-
-
-
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
@@ -41,8 +37,7 @@ private slots:
 
     void on_pushButton_clicked();
 
-    void resizeEvent(QResizeEvent* event);
-
+//    void resizeEvent(QResizeEvent* event);
 
 private:
 
