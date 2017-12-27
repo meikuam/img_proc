@@ -94,7 +94,13 @@ void MainWindow::on_saveFileAs_Clicked() {
     debugLabel->setText("saveFileAs");
 }
 
-
+//MainWindow::mouseDoubleClickEvent( QMouseEvent * e )
+//{
+//    if ( e->button() == Qt::LeftButton )
+//    {
+//        ...
+//    }
+//}
 
 void MainWindow::on_RGB_Checked() {
     if(ui->actionYCbCr->isChecked()) {

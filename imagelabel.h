@@ -40,8 +40,9 @@ private:
 
     QImage img;
     double scale = 1.0;
+    int dx, dy;
     int x_pix, w_pix,
-            y_pix, h_pix;
+        y_pix, h_pix;
 
     int w_orig,
         h_orig;

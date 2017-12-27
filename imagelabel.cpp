@@ -10,12 +10,34 @@ void ImageLabel::mouseReleaseEvent(QMouseEvent *ev) {
     this->setCursor(Qt::OpenHandCursor);
 }
 
+
+
+void ImageLabel::onHorisontalSliderMoved(int value) {
+    this->setText("onHorisontalSliderMoved" + QString::number(value));
+}
+
+void ImageLabel::onVerticalSliderMoved(int value) {
+    this->setText("onVerticalSliderMoved" + QString::number(value));
+
+}
+
+void ImageLabel::setImage(QImage &image) {
+    img = image;
+    dx = 0; dy = 0;
+    scale = 1.0;
+    w_win = this->width();
+    h_win = this->height();
+    repaint();
+}
+
 void ImageLabel::wheelEvent(QWheelEvent *event) {
     if(event->delta() > 0) {
         scale *= 1.1;
     } else {
         scale /= 1.1;
     }
+    w_win = this->width();
+    h_win = this->height();
     repaint();
     qDebug()<<"wheelEvent:"<<endl
            <<"w_win\t\t"<<w_win<<endl
@@ -29,27 +51,20 @@ void ImageLabel::wheelEvent(QWheelEvent *event) {
 }
 
 void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
-    this->setText("mouseMoveEvent" + QString::number(ev->x()) + " " + QString::number(ev->y()));
+//    this->setText("mouseMoveEvent" + QString::number(ev->x()) + " " + QString::number(ev->y()));
+    dx += ev->x();
+    dy += ev->y();
+    w_win = this->width();
+    h_win = this->height();
+    repaint();
 
     this->verticalSliderMoved(ev->y());
     this->horisontalSliderMoved(ev->x());
 }
-
-void ImageLabel::onHorisontalSliderMoved(int value) {
-    this->setText("onHorisontalSliderMoved" + QString::number(value));
-}
-
-void ImageLabel::onVerticalSliderMoved(int value) {
-    this->setText("onVerticalSliderMoved" + QString::number(value));
-
-}
-
-void ImageLabel::setImage(QImage &image) {
-    img = image;
-    repaint();
-}
-
  void ImageLabel::resizeEvent(QResizeEvent* event) {
+     event->size();
+     w_win = event->size().width();
+     h_win = event->size().height();
      repaint();
  }
 
@@ -58,36 +73,63 @@ void ImageLabel::setImage(QImage &image) {
      if(!img.isNull()) {
          w_orig = img.width() * scale;
          h_orig = img.height() * scale;
-         w_win = this->width();
-         h_win = this->height();
          if (w_win < w_orig) {
              if (h_win < h_orig) { // 1
 
                  qDebug()<<"setImage: 1"<<endl;
-                 x_pix = (w_orig - w_win) / 2;
-                 y_pix = (h_orig - h_win) / 2;
+                 x_pix = ((w_orig - w_win) / 2) - dx;
+                 y_pix = ((h_orig - h_win) / 2) - dy;
+
+                 if (x_pix < 0) {
+                    x_pix = 0;
+                 } else if (x_pix > w_orig) {
+                     x_pix = w_win - w_orig;
+                 }
+                 if (y_pix < 0) {
+                    y_pix = 0;
+                 } else if (y_pix > h_orig) {
+                    y_pix = h_win - h_orig;
+                 }
 
                  w_pix = w_orig - (w_orig - w_win);
                  h_pix = h_orig - (h_orig - h_win);
+
+                 dx = 0; dy = 0;
              } else { // 2
 
                  qDebug()<<"setImage: 2"<<endl;
                  y_pix = 0;
-                 x_pix = (w_orig - w_win) / 2;
+                 x_pix = ((w_orig - w_win) / 2) - dx;
+
+                 if (x_pix < 0) {
+                    x_pix = 0;
+                 } else if (x_pix > w_orig) {
+                     x_pix = w_win - w_orig;
+
+                 }
 
                  w_pix = w_orig - (w_orig - w_win);
                  h_pix = h_orig;
+
+
+                 dx = 0; dy = 0;
              }
          } else {
              if (h_win < h_orig) { // 3
 
                  qDebug()<<"setImage: 3";
-                 y_pix = (h_orig - h_win) / 2;
+                 y_pix = ((h_orig - h_win) / 2) - dy;
                  x_pix = 0;
 
+                 if (y_pix < 0) {
+                    y_pix = 0;
+                 } else if (y_pix > h_orig) {
+                    y_pix = h_win - h_orig;
+                 }
                  w_pix = w_orig;
                  h_pix = h_orig - (h_orig - h_win);
 
+                 dx = 0; dy = 0;
              } else { // 4
 
                  qDebug()<<"setImage: 4"<<endl;
@@ -95,6 +137,8 @@ void ImageLabel::setImage(QImage &image) {
 
                  w_pix = w_orig;
                  h_pix = h_orig;
+
+                 dx = 0; dy = 0;
              }
          }
          QPixmap p = QPixmap::fromImage(img);
