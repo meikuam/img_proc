@@ -2,9 +2,9 @@
 #include "ui_messagewindow.h"
 #include <QMessageBox>
 #include <QDebug>
-void changeImage(QImage &img, int val);
+void changeImage(QImage *img, int val);
 
-MessageWindow::MessageWindow(QImage &newImage, int value, QWidget *parent) :
+MessageWindow::MessageWindow(QImage *newImage, int value, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MessageWindow)
 {
@@ -15,6 +15,9 @@ MessageWindow::MessageWindow(QImage &newImage, int value, QWidget *parent) :
     ui->valueSlider->setValue(value);
 
     img = newImage;
+    *local = img->copy();
+
+    ui->imageLabel->setImage(local);
 }
 
 MessageWindow::~MessageWindow()
@@ -38,7 +41,7 @@ void MessageWindow::on_valueSlider_valueChanged(int value)
 {
     this->value = value;
     ui->valueEdit->setText(QString::number(this->value));
-    changeImage(img,this->value);
+    changeImage();
 }
 
 void MessageWindow::on_valueEdit_textChanged(const QString &arg1)
@@ -47,27 +50,33 @@ void MessageWindow::on_valueEdit_textChanged(const QString &arg1)
     int val = arg1.toInt(&ok);
     if(ok) {
         if(val > 255) {
-            this->value = 255;
+            value = 255;
             ui->valueSlider->setValue(255);
             ui->valueEdit->setText("255");
         } else if(val < 0) {
-            this->value = 0;
+            value = 0;
             ui->valueSlider->setValue(0);
             ui->valueEdit->setText("0");
         } else {
-            this->value = val;
+            value = val;
             ui->valueSlider->setValue(val);
         }
     }
-    changeImage(img,this->value);
+    changeImage();
+    ui->imageLabel->repaint();
 }
 
-void changeImage(QImage &img, int val) {
-    for(int c = 0; c < img.depth(); ++c){
-        for(int i = 0; i < img.width(); ++i) {
-            for(int j = 0; j< img.height(); ++j){
-                img.setPixel(i,j, val);
+
+void MessageWindow::changeImage() {
+
+        for(int i = 0; i < img->width(); ++i) {
+            for(int j = 0; j< img->height(); ++j){
+                QRgb pix = img->pixel(i, j);
+                int red = qRed(pix);
+                int green = qGreen(pix);
+                int blue = qBlue(pix);
+
+                local->setPixel(i, j, qRgb(red + value, green + value, blue + value));
             }
         }
-    }
 }

@@ -58,7 +58,7 @@
         <number>0</number>
        </property>
        <item row="3" column="0">
-        <widget class="QScrollBar" name="horizontalScrollBar">
+        <widget class="ScrollBar" name="horizontalScrollBar">
          <property name="enabled">
           <bool>true</bool>
          </property>
@@ -96,7 +96,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QScrollBar" name="verticalScrollBar">
+        <widget class="ScrollBar" name="verticalScrollBar">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
          </property>
@@ -272,9 +272,22 @@
     <signal>wheelEvent(QWheelEvent*)</signal>
     <signal>verticalSliderMoved(int)</signal>
     <signal>horisontalSliderMoved(int)</signal>
+    <signal>verticalSliderMaximum(int)</signal>
+    <signal>horisontalSliderMaximum(int)</signal>
+    <signal>verticalSliderHide(bool)</signal>
+    <signal>horisontalSliderHide(bool)</signal>
     <slot>onVerticalSliderMoved(int)</slot>
     <slot>onHorisontalSliderMoved(int)</slot>
     <slot>onWheelEvent(QWheelEvent*)</slot>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>ScrollBar</class>
+   <extends>QScrollBar</extends>
+   <header location="global">scrollbar.h</header>
+   <slots>
+    <slot>Maximum(int)</slot>
+    <slot>Hide(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -383,8 +396,8 @@
    <slot>onVerticalSliderMoved(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>384</x>
-     <y>265</y>
+     <x>516</x>
+     <y>327</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
@@ -399,8 +412,8 @@
    <slot>onHorisontalSliderMoved(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>210</x>
-     <y>392</y>
+     <x>213</x>
+     <y>516</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
@@ -419,8 +432,8 @@
      <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>146</x>
-     <y>391</y>
+     <x>149</x>
+     <y>516</y>
     </hint>
    </hints>
   </connection>
@@ -435,8 +448,72 @@
      <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>389</x>
-     <y>311</y>
+     <x>516</x>
+     <y>373</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageLabel</sender>
+   <signal>verticalSliderMaximum(int)</signal>
+   <receiver>verticalScrollBar</receiver>
+   <slot>Maximum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageLabel</sender>
+   <signal>horisontalSliderMaximum(int)</signal>
+   <receiver>horizontalScrollBar</receiver>
+   <slot>Maximum(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageLabel</sender>
+   <signal>horisontalSliderHide(bool)</signal>
+   <receiver>horizontalScrollBar</receiver>
+   <slot>Hide(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>509</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>imageLabel</sender>
+   <signal>verticalSliderHide(bool)</signal>
+   <receiver>verticalScrollBar</receiver>
+   <slot>Hide(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>509</x>
+     <y>282</y>
     </hint>
    </hints>
   </connection>

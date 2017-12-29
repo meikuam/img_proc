@@ -1,7 +1,7 @@
 #include "imagelabel.h"
 
 void ImageLabel::mousePressEvent(QMouseEvent *ev) {
-    this->setText("mousePressEvent");
+//    this->setText("mousePressEvent");
     this->setCursor(Qt::ClosedHandCursor);
 }
 //void mouseMoveEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
@@ -13,15 +13,15 @@ void ImageLabel::mouseReleaseEvent(QMouseEvent *ev) {
 
 
 void ImageLabel::onHorisontalSliderMoved(int value) {
-    this->setText("onHorisontalSliderMoved" + QString::number(value));
+//    this->setText("onHorisontalSliderMoved" + QString::number(value));
 }
 
 void ImageLabel::onVerticalSliderMoved(int value) {
-    this->setText("onVerticalSliderMoved" + QString::number(value));
+//    this->setText("onVerticalSliderMoved" + QString::number(value));
 
 }
 
-void ImageLabel::setImage(QImage &image) {
+void ImageLabel::setImage(QImage *image) {
     img = image;
     dx = 0; dy = 0;
     scale = 1.0;
@@ -70,9 +70,9 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
 
 
  void ImageLabel::repaint() {
-     if(!img.isNull()) {
-         w_orig = img.width() * scale;
-         h_orig = img.height() * scale;
+     if(!(img->isNull())) {
+         w_orig = img->width() * scale;
+         h_orig = img->height() * scale;
          if (w_win < w_orig) {
              if (h_win < h_orig) { // 1
 
@@ -81,20 +81,22 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  y_pix = ((h_orig - h_win) / 2) - dy;
 
                  if (x_pix < 0) {
-                    x_pix = 0;
-                 } else if (x_pix > w_orig) {
-                     x_pix = w_win - w_orig;
+                     x_pix = 0;
+                 } else if (x_pix > w_orig - w_win) {
+                     x_pix =  w_orig - w_win;
                  }
                  if (y_pix < 0) {
-                    y_pix = 0;
-                 } else if (y_pix > h_orig) {
-                    y_pix = h_win - h_orig;
+                     y_pix = 0;
+                 } else if (y_pix > h_orig - h_win) {
+                     y_pix = h_orig - h_win;
                  }
 
                  w_pix = w_orig - (w_orig - w_win);
                  h_pix = h_orig - (h_orig - h_win);
 
                  dx = 0; dy = 0;
+                 horisontalSliderHide(false);
+                 verticalSliderHide(false);
              } else { // 2
 
                  qDebug()<<"setImage: 2"<<endl;
@@ -102,9 +104,9 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  x_pix = ((w_orig - w_win) / 2) - dx;
 
                  if (x_pix < 0) {
-                    x_pix = 0;
-                 } else if (x_pix > w_orig) {
-                     x_pix = w_win - w_orig;
+                     x_pix = 0;
+                 } else if (x_pix > w_orig - w_win) {
+                     x_pix = w_orig - w_win;
 
                  }
 
@@ -113,6 +115,9 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
 
 
                  dx = 0; dy = 0;
+
+                 horisontalSliderHide(false);
+                 verticalSliderHide(true);
              }
          } else {
              if (h_win < h_orig) { // 3
@@ -122,14 +127,17 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  x_pix = 0;
 
                  if (y_pix < 0) {
-                    y_pix = 0;
-                 } else if (y_pix > h_orig) {
-                    y_pix = h_win - h_orig;
+                     y_pix = 0;
+                 } else if (y_pix > h_orig - h_win) {
+                     y_pix = h_orig - h_win;
                  }
                  w_pix = w_orig;
                  h_pix = h_orig - (h_orig - h_win);
 
                  dx = 0; dy = 0;
+
+                 horisontalSliderHide(true);
+                 verticalSliderHide(false);
              } else { // 4
 
                  qDebug()<<"setImage: 4"<<endl;
@@ -139,10 +147,19 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  h_pix = h_orig;
 
                  dx = 0; dy = 0;
+
+                 horisontalSliderHide(true);
+                 verticalSliderHide(true);
              }
          }
-         QPixmap p = QPixmap::fromImage(img);
-         setPixmap(p.scaled(w_orig, h_orig).copy(x_pix, y_pix, w_pix, h_pix));
+         QPixmap p = QPixmap::fromImage(*img);
+         QPixmap p_sub = p.copy(x_pix / scale, y_pix / scale, w_pix / scale, h_pix / scale);
+         int w_sub = p_sub.width();
+         int h_sub = p_sub.height();
+
+         setPixmap(p_sub.scaled(w_sub * scale, h_sub * scale));
+         //         setPixmap(p.scaled(w_orig, h_orig).copy(x_pix, y_pix, w_pix, h_pix));
      }
+
 
  }

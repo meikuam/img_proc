@@ -21,11 +21,13 @@ set(SOURCES
     mainwindow.cpp
     messagewindow.cpp
     imagelabel.cpp
+    scrollbar.cpp
 )
 set(HEADERS
     mainwindow.h
     messagewindow.h
     imagelabel.h
+    scrollbar.h
 )
 qt5_wrap_ui(UIS_HDRS
     mainwindow.ui

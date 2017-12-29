@@ -12,9 +12,10 @@ class MessageWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MessageWindow(QImage &newImage, int value, QWidget *parent = 0 );
+    explicit MessageWindow(QImage *newImage, int value, QWidget *parent = 0 );
     ~MessageWindow();
-    QImage img;
+    QImage* img,
+            *local;
     int value;
 
 private slots:
@@ -26,6 +27,8 @@ private slots:
     void on_valueSlider_valueChanged(int value);
 
     void on_valueEdit_textChanged(const QString &arg1);
+
+    void changeImage();
 
 private:
     Ui::MessageWindow *ui;

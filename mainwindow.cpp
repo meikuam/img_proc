@@ -18,6 +18,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     debugLabel = new QLabel();
     ui->statusBar->addWidget(debugLabel);
+    ui->verticalScrollBar->setHidden(true);
+    ui->horizontalScrollBar->setHidden(true);
 }
 
 MainWindow::~MainWindow()
@@ -68,7 +70,7 @@ void MainWindow::on_openFile_Clicked() {
     QPixmap p = QPixmap::fromImage(*img);
     ui->verticalScrollBar->setMaximum(img->height());
     ui->horizontalScrollBar->setMaximum(img->width());
-    ui->imageLabel->setImage(*img);
+    ui->imageLabel->setImage(img);
     QImage::Format f = img->format();
     if(f == QImage::Format_RGB32) {
         ui->listWidget->addItem("R");
@@ -159,7 +161,7 @@ void MainWindow::on_pushButton_clicked()
     }
     else
     {
-        mw = new MessageWindow(*img, 0);
+        mw = new MessageWindow(img, 0);
         mw->setAttribute(Qt::WA_DeleteOnClose);
         mw->show();
     }

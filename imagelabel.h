@@ -34,11 +34,22 @@ public:
     Q_SIGNAL
     void horisontalSliderMoved(int value);
 
-    void setImage(QImage &img);
-private:
-    void repaint();
 
-    QImage img;
+    Q_SIGNAL
+    void verticalSliderMaximum(int value);
+    Q_SIGNAL
+    void horisontalSliderMaximum(int value);
+
+    Q_SIGNAL
+    void verticalSliderHide(bool);
+    Q_SIGNAL
+    void horisontalSliderHide(bool);
+
+    void setImage(QImage *img);
+    void repaint();
+private:
+
+    QImage* img;
     double scale = 1.0;
     int dx, dy;
     int x_pix, w_pix,
