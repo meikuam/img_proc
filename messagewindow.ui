@@ -190,6 +190,10 @@
     <signal>wheelEvent(QWheelEvent*)</signal>
     <signal>verticalSliderMoved(int)</signal>
     <signal>horisontalSliderMoved(int)</signal>
+    <signal>verticalSliderMaximum(int)</signal>
+    <signal>horisontalSliderMaximum(int)</signal>
+    <signal>verticalSliderHide(bool)</signal>
+    <signal>horisontalSliderHide(bool)</signal>
     <slot>onVerticalSliderMoved(int)</slot>
     <slot>onHorisontalSliderMoved(int)</slot>
     <slot>onWheelEvent(QWheelEvent*)</slot>
