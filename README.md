@@ -1,4 +1,4 @@
-# img_proc1
+# img_proc
 lab1
 
 Program for translating from one color space to another

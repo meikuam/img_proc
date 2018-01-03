@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1)
-set(project_name "img_proc1")
+set(project_name "img_proc")
 PROJECT(${project_name})
 
 add_definitions( -std=c++11 )
