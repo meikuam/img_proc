@@ -16,14 +16,12 @@ class ImageLabel;
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
-    QLabel* debugLabel;
-    QImage *img;
+    QLabel              *debugLabel;
+    QImage              *img = nullptr;
 
-    int valuee;
 private slots:
     void on_openFile_Clicked();
     void on_saveFile_Clicked();
@@ -33,11 +31,12 @@ private slots:
     void on_YCbCr_Checked();
     void on_HSV_Checked();
 
+    void openFile(QString fileName);
 
+    void dragEnterEvent(QDragEnterEvent *event);
+    void dropEvent(QDropEvent *event);
 
     void on_pushButton_clicked();
-
-//    void resizeEvent(QResizeEvent* event);
 
 private:
 

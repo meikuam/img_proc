@@ -10,6 +10,9 @@
     <height>542</height>
    </rect>
   </property>
+  <property name="acceptDrops">
+   <bool>true</bool>
+  </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
@@ -87,8 +90,11 @@
            <height>0</height>
           </size>
          </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
          <property name="text">
-          <string>sample_text</string>
+          <string/>
          </property>
          <property name="alignment">
           <set>Qt::AlignCenter</set>
@@ -113,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>813</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
@@ -181,7 +187,7 @@
           <x>0</x>
           <y>0</y>
           <width>274</width>
-          <height>413</height>
+          <height>422</height>
          </rect>
         </property>
         <attribute name="label">

@@ -1,15 +1,31 @@
 #include "imagelabel.h"
 
 void ImageLabel::mousePressEvent(QMouseEvent *ev) {
-//    this->setText("mousePressEvent");
+    this->setText("mousePressEvent");
     this->setCursor(Qt::ClosedHandCursor);
+
+//    void MainWindow::mousePressEvent(QMouseEvent *event)
+//    {
+//        if (event->button() == Qt::LeftButton
+//            && iconLabel->geometry().contains(event->pos())) {
+
+//            QDrag *drag = new QDrag(this);
+//            QMimeData *mimeData = new QMimeData;
+
+//            mimeData->setText(commentEdit->toPlainText());
+//            drag->setMimeData(mimeData);
+//            drag->setPixmap(iconPixmap);
+
+//            Qt::DropAction dropAction = drag->exec();
+//            ...
+//        }
+//    }
 }
 //void mouseMoveEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
 void ImageLabel::mouseReleaseEvent(QMouseEvent *ev) {
 //    this->setText("mouseReleaseEvent");
     this->setCursor(Qt::OpenHandCursor);
 }
-
 
 
 void ImageLabel::onHorisontalSliderMoved(int value) {
@@ -70,7 +86,7 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
 
 
  void ImageLabel::repaint() {
-     if(!(img->isNull())) {
+     if(img != nullptr) {
          w_orig = img->width() * scale;
          h_orig = img->height() * scale;
          if (w_win < w_orig) {

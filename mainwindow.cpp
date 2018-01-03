@@ -14,7 +14,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setAcceptDrops(true);
     ui->setupUi(this);
-    valuee = 0;
 
     debugLabel = new QLabel();
     ui->statusBar->addWidget(debugLabel);
@@ -27,50 +26,31 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-//void MainWindow::on_pushButton_clicked()
-//{
+void MainWindow::dragEnterEvent(QDragEnterEvent *event)
+{
+    if (event->mimeData()->hasUrls())
+    {
+        ui->imageLabel->setText("Drop image here");
+        event->acceptProposedAction();
+    }
+}
 
+void MainWindow::dropEvent(QDropEvent *event)
+{
+    QString fileName  = event->mimeData()->urls()[0].toLocalFile();
+    QImage test;
+    if(test.load(fileName)) {
+        openFile(fileName);
+    } else {
+        ui->imageLabel->setText("Can't handle this format.");
+    }
+    event->acceptProposedAction();
+}
 
-//    QApplication::processEvents();
-//    ui->label->setText(QString::number(0));
-
-
-
-////    QMessageBox::StandardButton reply;
-////    reply = QMessageBox::question(this, "Test", "Quit?",
-////                                  QMessageBox::Yes|QMessageBox::No);
-////    if (reply == QMessageBox::Yes) {
-////      qDebug() << "Yes was clicked";
-////      QApplication::quit();
-////    } else {
-////      qDebug() << "Yes was *not* clicked";
-////    }
-
-//}
-
-//void MainWindow::on_openImageButton_clicked()
-//{
-
-
-//}
-
-//void MainWindow::on_pushButton_2_clicked()
-//{
-//    iv = new ImageViewer;
-//    iv->show();
-//}
-
-//void MainWindow::on_pushButton_clicked()
-
-
-void MainWindow::on_openFile_Clicked() {
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение"), "/", "Image Files (*.png *.jpg *.bmp)");
+void MainWindow::openFile(QString fileName) {
     img = new QImage(fileName);
-//    ui->debugLabel->setScaledContents(true);
-    QPixmap p = QPixmap::fromImage(*img);
-    ui->verticalScrollBar->setMaximum(img->height());
-    ui->horizontalScrollBar->setMaximum(img->width());
     ui->imageLabel->setImage(img);
+
     QImage::Format f = img->format();
     if(f == QImage::Format_RGB32) {
         ui->listWidget->addItem("R");
@@ -82,11 +62,11 @@ void MainWindow::on_openFile_Clicked() {
     } else {
         qDebug() << "unknown format" << QString::number(f);
     }
+}
 
-//    ui->imageLabel->setPixmap(p.scaled(ui->imageLabel->width(), ui->imageLabel->height(), Qt::KeepAspectRatio));
-//    ui->debugLabel->adjustSize();
-
-//    ui->debugLabel->setText("openFile");
+void MainWindow::on_openFile_Clicked() {
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение"), "/", "Image Files (*.png *.jpg *.bmp)");
+    openFile(fileName);
 }
 
 void MainWindow::on_saveFile_Clicked() {
@@ -96,13 +76,6 @@ void MainWindow::on_saveFileAs_Clicked() {
     debugLabel->setText("saveFileAs");
 }
 
-//MainWindow::mouseDoubleClickEvent( QMouseEvent * e )
-//{
-//    if ( e->button() == Qt::LeftButton )
-//    {
-//        ...
-//    }
-//}
 
 void MainWindow::on_RGB_Checked() {
     if(ui->actionYCbCr->isChecked()) {
@@ -155,17 +128,24 @@ void MainWindow::on_HSV_Checked() {
 
 void MainWindow::on_pushButton_clicked()
 {
-    if(img->isNull())
-    {
-        return;
-    }
-    else
+    if(img != nullptr)
     {
         mw = new MessageWindow(img, 0);
         mw->setAttribute(Qt::WA_DeleteOnClose);
         mw->show();
     }
 }
+
+
+
+//MainWindow::mouseDoubleClickEvent( QMouseEvent * e )
+//{
+//    if ( e->button() == Qt::LeftButton )
+//    {
+//        ...
+//    }
+//}
+
 
 //void MainWindow::resizeEvent(QResizeEvent* event)
 //{

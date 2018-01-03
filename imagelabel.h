@@ -13,9 +13,9 @@ class ImageLabel : public QLabel{
 
 public:
     explicit ImageLabel(QWidget *parent=Q_NULLPTR, Qt::WindowFlags f=Qt::WindowFlags()) :
-        QLabel(parent, f){}
+        QLabel(parent, f){ img = nullptr;}
     explicit ImageLabel(const QString &text, QWidget *parent=Q_NULLPTR, Qt::WindowFlags f=Qt::WindowFlags()) :
-        QLabel(text, parent, f) {}
+        QLabel(text, parent, f) {img = nullptr;}
 
     void mousePressEvent(QMouseEvent *ev);
     void mouseReleaseEvent(QMouseEvent *ev);
@@ -47,6 +47,7 @@ public:
 
     void setImage(QImage *img);
     void repaint();
+
 private:
 
     QImage* img;

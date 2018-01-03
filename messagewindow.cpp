@@ -15,7 +15,7 @@ MessageWindow::MessageWindow(QImage *newImage, int value, QWidget *parent) :
     ui->valueSlider->setValue(value);
 
     img = newImage;
-    *local = img->copy();
+//    *local = img->copy();
 
     ui->imageLabel->setImage(local);
 }
