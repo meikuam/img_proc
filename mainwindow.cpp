@@ -138,7 +138,12 @@ void MainWindow::on_HSV_Checked() {
 
 
 void MainWindow::on_Brightness_Clicked() {
-
+    if(img != nullptr)
+    {
+        bw = new BrightnessWindow(img, 0);
+        bw->setAttribute(Qt::WA_DeleteOnClose);
+        bw->show();
+    }
 }
 
 void MainWindow::on_pushButton_clicked()

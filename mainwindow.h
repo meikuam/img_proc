@@ -4,12 +4,14 @@
 #include <QMainWindow>
 
 #include "messagewindow.h"
+#include "brightnesswindow.h"
 #include <QtWidgets>
 #include <QWheelEvent>
 #include <qlabel.h>
 
 namespace Ui {
 class MainWindow;
+class BrightnessWindow;
 class ImageLabel;
 class ImgData;
 }
@@ -88,6 +90,7 @@ private:
 
     Ui::MainWindow      *ui;
     MessageWindow       *mw;
+    BrightnessWindow    *bw;
 
 protected:
 };
