@@ -38,29 +38,39 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
 void MainWindow::dropEvent(QDropEvent *event)
 {
     QString fileName  = event->mimeData()->urls()[0].toLocalFile();
-    QImage test;
-    if(test.load(fileName)) {
-        openFile(fileName);
-    } else {
-        ui->imageLabel->setText("Can't handle this format.");
-    }
+    openFile(fileName);
     event->acceptProposedAction();
 }
 
 void MainWindow::openFile(QString fileName) {
-    img = new QImage(fileName);
-    ui->imageLabel->setImage(img);
+    if(img != nullptr)
+    {
+        delete img;
+    }
+    img = new QImage();
+    if(img->load(fileName)) {
+        data = new ImgData(img);
+        ui->imageLabel->setImage(img);
+//        *loc_img = img->copy();
+        if(img->format() == QImage::Format_RGB32) {
+            ui->listWidget->clear();
 
-    QImage::Format f = img->format();
-    if(f == QImage::Format_RGB32) {
-        ui->listWidget->addItem("R");
-        ui->listWidget->addItem("G");
-        ui->listWidget->addItem("B");
-        ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
-        ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
-        ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+            ui->listWidget->addItem("RGB");
+            ui->listWidget->addItem("R");
+            ui->listWidget->addItem("G");
+            ui->listWidget->addItem("B");
+            ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+            ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
+            ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+            ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
+
+            ui->listWidget->selectAll();
+        } else {
+            qDebug() << "unknown format";
+        }
     } else {
-        qDebug() << "unknown format" << QString::number(f);
+        delete img;
+        ui->imageLabel->setText("Can't handle this format.");
     }
 }
 
@@ -126,6 +136,11 @@ void MainWindow::on_HSV_Checked() {
     }
 }
 
+
+void MainWindow::on_Brightness_Clicked() {
+
+}
+
 void MainWindow::on_pushButton_clicked()
 {
     if(img != nullptr)
@@ -152,4 +167,62 @@ void MainWindow::on_pushButton_clicked()
 //   QMainWindow::resizeEvent(event);
 
 //   // Your code here.
+//}
+
+void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
+    if(item->checkState() == Qt::CheckState::Checked) {                     // current item is checked
+        if(item->text() == ui->listWidget->item(0)->text()) {               // first item
+            // ignore click //
+        } else {                                                            // one of items
+
+            // actions (turn off one of channels)
+            ui->listWidget->item(0)->setCheckState(Qt::CheckState::Unchecked);
+            // check if one of channels is on
+            bool check = false;
+            for(int i = 1; i < ui->listWidget->count(); i++) {
+                if(ui->listWidget->item(i)->checkState() == Qt::CheckState::Checked) {
+                    if(item->text() != ui->listWidget->item(i)->text()) {
+                        check = true;
+                        break;
+                    }
+                }
+            }
+            if(check) {
+                item->setCheckState(Qt::CheckState::Unchecked);
+
+                int num = 0;
+                if(item->text() == "R") num = 0;
+                if(item->text() == "G") num = 1;
+                if(item->text() == "B") num = 2;
+                ui->imageLabel->setImage(data->turnOffChannel(num));
+                debugLabel->setText(QString::number(num));
+            }
+        }
+    } else {                                                                // current item is unchecked
+        if(item->text() == ui->listWidget->item(0)->text()) {               // first item
+            // actions (turn on all of channels)
+            for(int i = 0; i < ui->listWidget->count(); i++) {
+                ui->listWidget->item(i)->setCheckState(Qt::CheckState::Checked);
+            }
+        } else {                                                            // one of items
+            // actions (turn on one of channels)
+            item->setCheckState(Qt::CheckState::Checked);
+            // check if all of channels are on
+            bool check = true;
+            for(int i = 1; i < ui->listWidget->count(); i++) {
+                if(ui->listWidget->item(i)->checkState() == Qt::CheckState::Unchecked) {
+                    check = false;
+                    break;
+                }
+            }
+            if(check) {
+                ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+            }
+        }
+    }
+}
+
+//void MainWindow::on_listWidget_clicked(const QModelIndex &index)
+//{
+//    QListWidgetItem *item = ui->listWidget->item(index.row());
 //}

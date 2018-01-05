@@ -137,13 +137,20 @@
     </property>
     <widget class="QMenu" name="menu_3">
      <property name="title">
-      <string>Цветовая модель</string>
+      <string>Режим</string>
      </property>
      <addaction name="actionRGB"/>
      <addaction name="actionYCbCr"/>
      <addaction name="actionHSV"/>
     </widget>
+    <widget class="QMenu" name="menu_4">
+     <property name="title">
+      <string>Коррекция</string>
+     </property>
+     <addaction name="action_Brightness"/>
+    </widget>
     <addaction name="menu_3"/>
+    <addaction name="menu_4"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menu_2"/>
@@ -267,6 +274,11 @@
     <string>HSV</string>
    </property>
   </action>
+  <action name="action_Brightness">
+   <property name="text">
+    <string>Яркость</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -349,7 +361,7 @@
   </connection>
   <connection>
    <sender>actionRGB</sender>
-   <signal>changed()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_RGB_Checked()</slot>
    <hints>
@@ -365,7 +377,7 @@
   </connection>
   <connection>
    <sender>actionHSV</sender>
-   <signal>changed()</signal>
+   <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
    <slot>on_HSV_Checked()</slot>
    <hints>
@@ -523,6 +535,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Brightness</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_Brightness_Clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>406</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>resizeEvent(QResizeEvent*)</signal>
@@ -532,5 +560,6 @@
   <slot>on_YCbCr_Checked()</slot>
   <slot>on_HSV_Checked()</slot>
   <slot>on_RGB_Checked()</slot>
+  <slot>on_Brightness_Clicked()</slot>
  </slots>
 </ui>
