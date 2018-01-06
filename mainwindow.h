@@ -80,8 +80,6 @@ private slots:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
-    void on_pushButton_clicked();
-
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
 //    void on_listWidget_clicked(const QModelIndex &index);

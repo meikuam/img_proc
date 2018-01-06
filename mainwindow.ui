@@ -122,7 +122,7 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menu">
+   <widget class="QMenu" name="menu_file">
     <property name="title">
      <string>Файл</string>
     </property>
@@ -131,11 +131,11 @@
     <addaction name="saveFileAct"/>
     <addaction name="saveFileAsAct"/>
    </widget>
-   <widget class="QMenu" name="menu_2">
+   <widget class="QMenu" name="menu_image">
     <property name="title">
      <string>  Изображение</string>
     </property>
-    <widget class="QMenu" name="menu_3">
+    <widget class="QMenu" name="menu_format">
      <property name="title">
       <string>Режим</string>
      </property>
@@ -143,17 +143,17 @@
      <addaction name="actionYCbCr"/>
      <addaction name="actionHSV"/>
     </widget>
-    <widget class="QMenu" name="menu_4">
+    <widget class="QMenu" name="menu_correction">
      <property name="title">
       <string>Коррекция</string>
      </property>
      <addaction name="action_Brightness"/>
     </widget>
-    <addaction name="menu_3"/>
-    <addaction name="menu_4"/>
+    <addaction name="menu_format"/>
+    <addaction name="menu_correction"/>
    </widget>
-   <addaction name="menu"/>
-   <addaction name="menu_2"/>
+   <addaction name="menu_file"/>
+   <addaction name="menu_image"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -185,6 +185,12 @@
     <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QToolBox" name="toolBox">
+       <property name="frameShape">
+        <enum>QFrame::Box</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
+       </property>
        <property name="currentIndex">
         <number>0</number>
        </property>
@@ -194,20 +200,13 @@
           <x>0</x>
           <y>0</y>
           <width>274</width>
-          <height>422</height>
+          <height>420</height>
          </rect>
         </property>
         <attribute name="label">
          <string>Каналы</string>
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="1" column="0">
-          <widget class="QPushButton" name="pushButton">
-           <property name="text">
-            <string>PushButton</string>
-           </property>
-          </widget>
-         </item>
          <item row="0" column="0">
           <widget class="QListWidget" name="listWidget"/>
          </item>

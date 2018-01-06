@@ -19,6 +19,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->statusBar->addWidget(debugLabel);
     ui->verticalScrollBar->setHidden(true);
     ui->horizontalScrollBar->setHidden(true);
+
+    ui->menu_format->setEnabled(false);
+    ui->menu_correction->setEnabled(false);
+    ui->saveFileAct->setEnabled(false);
+    ui->saveFileAsAct->setEnabled(false);
 }
 
 MainWindow::~MainWindow()
@@ -146,15 +151,15 @@ void MainWindow::on_Brightness_Clicked() {
     }
 }
 
-void MainWindow::on_pushButton_clicked()
-{
-    if(img != nullptr)
-    {
-        mw = new MessageWindow(img, 0);
-        mw->setAttribute(Qt::WA_DeleteOnClose);
-        mw->show();
-    }
-}
+//void MainWindow::on_pushButton_clicked()
+//{
+//    if(img != nullptr)
+//    {
+//        mw = new MessageWindow(img, 0);
+//        mw->setAttribute(Qt::WA_DeleteOnClose);
+//        mw->show();
+//    }
+//}
 
 
 
