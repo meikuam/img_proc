@@ -23,6 +23,7 @@ set(SOURCES
     imagelabel.cpp
     scrollbar.cpp
     brightnesswindow.cpp
+    imgdata.cpp
 )
 set(HEADERS
     mainwindow.h
@@ -30,6 +31,7 @@ set(HEADERS
     imagelabel.h
     scrollbar.h
     brightnesswindow.h
+    imgdata.h
 )
 qt5_wrap_ui(UIS_HDRS
     mainwindow.ui
