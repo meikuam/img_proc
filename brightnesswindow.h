@@ -2,6 +2,8 @@
 #define BRIGHTNESSWINDOW_H
 
 #include <QMainWindow>
+#include <QListWidget>
+#include "imgdata.h"
 
 namespace Ui {
 class BrightnessWindow;
@@ -12,9 +14,9 @@ class BrightnessWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit BrightnessWindow(QImage *newImage, int value, QWidget *parent = 0 );
+    explicit BrightnessWindow(ImgData *data, QListWidget* listWidget, QWidget *parent = 0 );
     ~BrightnessWindow();
-    QImage* img,
+    ImgData *img,
             *local;
     int value;
 

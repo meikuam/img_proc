@@ -21,6 +21,7 @@ void ImageLabel::onVerticalSliderMoved(int value) {
 }
 
 void ImageLabel::setImage(QImage *image) {
+    if(img != nullptr) delete img;
     img = image;
     dx = 0; dy = 0;
     scale = 1.0;

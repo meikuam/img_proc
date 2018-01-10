@@ -14,6 +14,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     setAcceptDrops(true);
     ui->setupUi(this);
+    data = new ImgData();
 
     debugLabel = new QLabel();
     ui->statusBar->addWidget(debugLabel);
@@ -48,34 +49,80 @@ void MainWindow::dropEvent(QDropEvent *event)
 }
 
 void MainWindow::openFile(QString fileName) {
-    if(img != nullptr)
-    {
-        delete img;
+    if(!data->isNull()) {
+        qDebug() << "!data->isNull() -> delete data";
+        delete data;
     }
-    img = new QImage();
-    if(img->load(fileName)) {
-        data = new ImgData(img);
-        ui->imageLabel->setImage(img);
+    data = new ImgData(fileName);
+//    ImgData* copy = new ImgData(*data);
+
+    if(!data->isNull()) {
+        ui->imageLabel->setImage(data->toImage());
 //        *loc_img = img->copy();
-        if(img->format() == QImage::Format_RGB32) {
-            ui->listWidget->clear();
+        if(data->format() == Format_RGB) {
+            setlistWidget(data->format());
 
-            ui->listWidget->addItem("RGB");
-            ui->listWidget->addItem("R");
-            ui->listWidget->addItem("G");
-            ui->listWidget->addItem("B");
-            ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
-            ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
-            ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
-            ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
-
-            ui->listWidget->selectAll();
+            ui->menu_format->setEnabled(true);
+            ui->menu_correction->setEnabled(true);
+            ui->saveFileAct->setEnabled(true);
+            ui->saveFileAsAct->setEnabled(true);
         } else {
+            delete data;
             qDebug() << "unknown format";
         }
     } else {
-        delete img;
+        delete data;
         ui->imageLabel->setText("Can't handle this format.");
+    }
+}
+
+
+void MainWindow::setlistWidget(Format format) {
+    switch (format) {
+    case Format_RGB:
+        ui->listWidget->clear();
+
+        ui->listWidget->addItem("RGB");
+        ui->listWidget->addItem("R");
+        ui->listWidget->addItem("G");
+        ui->listWidget->addItem("B");
+        ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
+
+        ui->listWidget->selectAll();
+        break;
+    case Format_HSV:
+        ui->listWidget->clear();
+
+        ui->listWidget->addItem("HSV");
+        ui->listWidget->addItem("H");
+        ui->listWidget->addItem("S");
+        ui->listWidget->addItem("V");
+        ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
+
+        ui->listWidget->selectAll();
+        break;
+    case Format_YCbCr:
+        ui->listWidget->clear();
+
+        ui->listWidget->addItem("YCbCr");
+        ui->listWidget->addItem("Y");
+        ui->listWidget->addItem("Cb");
+        ui->listWidget->addItem("Cr");
+        ui->listWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
+        ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
+
+        ui->listWidget->selectAll();
+        break;
+    default:
+        break;
     }
 }
 
@@ -143,9 +190,9 @@ void MainWindow::on_HSV_Checked() {
 
 
 void MainWindow::on_Brightness_Clicked() {
-    if(img != nullptr)
+    if(data != nullptr)
     {
-        bw = new BrightnessWindow(img, 0);
+        bw = new BrightnessWindow(data, ui->listWidget);
         bw->setAttribute(Qt::WA_DeleteOnClose);
         bw->show();
     }
@@ -199,13 +246,6 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
             }
             if(check) {
                 item->setCheckState(Qt::CheckState::Unchecked);
-
-                int num = 0;
-                if(item->text() == "R") num = 0;
-                if(item->text() == "G") num = 1;
-                if(item->text() == "B") num = 2;
-                ui->imageLabel->setImage(data->turnOffChannel(num));
-                debugLabel->setText(QString::number(num));
             }
         }
     } else {                                                                // current item is unchecked
@@ -230,6 +270,9 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
             }
         }
     }
+    ui->imageLabel->setImage(data->toImage(ui->listWidget->item(1)->checkState() == Qt::CheckState::Checked,
+                                           ui->listWidget->item(2)->checkState() == Qt::CheckState::Checked,
+                                           ui->listWidget->item(3)->checkState() == Qt::CheckState::Checked));
 }
 
 //void MainWindow::on_listWidget_clicked(const QModelIndex &index)

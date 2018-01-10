@@ -7,32 +7,35 @@
 #include <QVector>
 //void changeImage(QImage *img, int val);
 
-BrightnessWindow::BrightnessWindow(QImage *newImage, int value, QWidget *parent) :
+BrightnessWindow::BrightnessWindow(ImgData *data, QListWidget* listWidget, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::BrightnessWindow)
 {
     ui->setupUi(this);
-    ui->channelBox->addItem("Red");
-    ui->channelBox->addItem("Green");
-    ui->channelBox->addItem("Blue");
-//    img = newImage;
-//    *local = img->copy();
-
-//    ui->imageLabel->setImage(local);
+    for(int i = 0; i < listWidget->count(); i++) {
+        ui->channelBox->addItem(listWidget->item(i)->text());
+    }
+    img = data;
+    local = new ImgData(*data);
 }
 
 BrightnessWindow::~BrightnessWindow()
 {
+    std::cout<<"~BrightnessWindow()"<<endl;
+//    delete local;
     delete ui;
 }
 
 void BrightnessWindow::on_applyButton_clicked()
 {
+    delete local;
     this->close();
 }
 
 void BrightnessWindow::on_cancelButton_clicked()
 {
+    delete img;
+    img = local;
     this->close();
 }
 

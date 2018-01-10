@@ -26,8 +26,6 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
     QLabel              *debugLabel;
-    QImage              *img = nullptr;
-    QImage              *loc_img = nullptr;
 
     ImgData             *data;
 private slots:
@@ -48,6 +46,7 @@ private slots:
 
     void on_listWidget_itemClicked(QListWidgetItem *item);
 
+    void setlistWidget(Format format);
 //    void on_listWidget_clicked(const QModelIndex &index);
 
 private:
