@@ -19,6 +19,12 @@ public:
     ImgData *img,
             *local;
     int value;
+    bool channels[3];
+
+    Q_SIGNAL
+    void repaint();
+    Q_SIGNAL
+    void setImage(QImage* img);
 
 private slots:
 

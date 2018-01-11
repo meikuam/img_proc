@@ -4,7 +4,6 @@ void ImageLabel::mousePressEvent(QMouseEvent *ev) {
 //    this->setText("mousePressEvent");
     this->setCursor(Qt::ClosedHandCursor);
 }
-//void mouseMoveEvent(QMouseEvent *ev) Q_DECL_OVERRIDE;
 void ImageLabel::mouseReleaseEvent(QMouseEvent *ev) {
 //    this->setText("mouseReleaseEvent");
     this->setCursor(Qt::OpenHandCursor);
@@ -21,7 +20,7 @@ void ImageLabel::onVerticalSliderMoved(int value) {
 }
 
 void ImageLabel::setImage(QImage *image) {
-    if(img != nullptr) delete img;
+//    if(img != nullptr) delete img;
     img = image;
     dx = 0; dy = 0;
     scale = 1.0;
@@ -39,15 +38,15 @@ void ImageLabel::wheelEvent(QWheelEvent *event) {
     w_win = this->width();
     h_win = this->height();
     repaint();
-    qDebug()<<"wheelEvent:"<<endl
-           <<"w_win\t\t"<<w_win<<endl
-           <<"h_win\t\t"<<h_win<<endl
-           <<"w_orig\t\t"<<w_orig<<endl
-           <<"h_orig\t\t"<<h_orig<<endl
-           <<"x_pix\t\t"<<x_pix<<endl
-           <<"y_pix\t\t"<<y_pix<<endl
-           <<"w_pix\t\t"<<w_pix<<endl
-           <<"h_pix\t\t"<<h_pix<<endl;
+//    qDebug()<<"wheelEvent:"<<endl
+//           <<"w_win\t\t"<<w_win<<endl
+//           <<"h_win\t\t"<<h_win<<endl
+//           <<"w_orig\t\t"<<w_orig<<endl
+//           <<"h_orig\t\t"<<h_orig<<endl
+//           <<"x_pix\t\t"<<x_pix<<endl
+//           <<"y_pix\t\t"<<y_pix<<endl
+//           <<"w_pix\t\t"<<w_pix<<endl
+//           <<"h_pix\t\t"<<h_pix<<endl;
 }
 
 void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
@@ -158,8 +157,5 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
          int h_sub = p_sub.height();
 
          setPixmap(p_sub.scaled(w_sub * scale, h_sub * scale));
-         //         setPixmap(p.scaled(w_orig, h_orig).copy(x_pix, y_pix, w_pix, h_pix));
      }
-
-
  }

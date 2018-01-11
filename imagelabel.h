@@ -44,8 +44,10 @@ public:
     void verticalSliderHide(bool);
     Q_SIGNAL
     void horisontalSliderHide(bool);
-
+    Q_SLOT
     void setImage(QImage *img);
+
+    Q_SLOT
     void repaint();
 
 private:
