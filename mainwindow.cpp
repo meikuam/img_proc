@@ -93,6 +93,7 @@ void MainWindow::on_RGB_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form HSV to RGB");
+        data->convertTo(Format_RGB);
 
         setlistWidget(Format_RGB);
         //actions
@@ -101,10 +102,10 @@ void MainWindow::on_RGB_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("RGB isChecked");
+        data->convertTo(Format_RGB);
         // actions
     }
-
-
+    ui->imageLabel->repaint();
 }
 
 void MainWindow::on_YCbCr_Checked() {
@@ -124,6 +125,7 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(true);
         debugLabel->setText("form HSV to YCbCr");
+        data->convertTo(Format_YCbCr);
 
         setlistWidget(Format_YCbCr);
         //actions
@@ -132,8 +134,10 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(true);
         debugLabel->setText("YCbCr isChecked");
+        data->convertTo(Format_YCbCr);
         //actions
     }
+    ui->imageLabel->repaint();
 }
 
 void MainWindow::on_HSV_Checked() {
@@ -142,6 +146,7 @@ void MainWindow::on_HSV_Checked() {
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form YCbCr to HSV");
+        data->convertTo(Format_HSV);
         setlistWidget(Format_HSV);
         //actions
     } else if(ui->actionRGB->isChecked()) {
@@ -149,15 +154,18 @@ void MainWindow::on_HSV_Checked() {
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form RGB to HSV");
+        data->convertTo(Format_HSV);
         setlistWidget(Format_HSV);
         //actions
     } else {
         ui->actionRGB->setChecked(false);
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
+        data->convertTo(Format_HSV);
         debugLabel->setText("HSV isChecked");
         //actions
     }
+    ui->imageLabel->repaint();
 }
 
 void MainWindow::on_Brightness_Clicked() {
@@ -237,9 +245,6 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
-
-        data->setChannels();
-//        ui->listWidget->selectAll();
         break;
     case Format_HSV:
         ui->listWidget->clear();
@@ -252,9 +257,6 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
-
-        data->setChannels();
-//        ui->listWidget->selectAll();
         break;
     case Format_YCbCr:
         ui->listWidget->clear();
@@ -267,9 +269,6 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(1)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
-
-        data->setChannels();
-//        ui->listWidget->selectAll();
         break;
     }
 }

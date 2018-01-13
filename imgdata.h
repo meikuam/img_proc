@@ -3,6 +3,8 @@
 
 #include <QImage>
 #include <iostream>
+#include "converter.h"
+
 enum Format {
     Format_RGB,
     Format_YCbCr,
@@ -192,7 +194,5 @@ public:
     void RGBupdate();
     void convertTo(Format f);
 };
-
-
 
 #endif // IMGDATA_H
