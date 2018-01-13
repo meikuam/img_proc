@@ -106,11 +106,25 @@ void ImgData::RGBupdate() {
             uint8_t* rgb;
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
-                    hsv[0]              = channel_[0] ? *data(x, y, 0) : 0;
-                    hsv[1]              = channel_[1] ? *data(x, y, 1) : 0;
-                    hsv[2]              = channel_[2] ? *data(x, y, 2) : 0;
-                    rgb                 = Converter::HSV2RGB(hsv);
-                    RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
+//                    if(channel_[0] && !channel_[1] && !channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 0),
+//                                                      *data(x, y, 0),
+//                                                      *data(x, y, 0)));
+//                    } else if(!channel_[0] && channel_[1] && !channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 1),
+//                                                      *data(x, y, 1),
+//                                                      *data(x, y, 1)));
+//                    } else if(!channel_[0] && !channel_[1] && channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 2),
+//                                                      *data(x, y, 2),
+//                                                      *data(x, y, 2)));
+//                    } else {
+                        hsv[0]              = *data(x, y, 0);
+                        hsv[1]              = *data(x, y, 1);
+                        hsv[2]              = *data(x, y, 2);
+                        rgb = Converter::HSV2RGB(hsv, channel_[0], channel_[1], channel_[2]);
+                        RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
+//                    }
 //                    delete rgb;
                 }
             }
@@ -122,11 +136,25 @@ void ImgData::RGBupdate() {
             uint8_t* rgb;
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
-                    ycbcr[0]            = channel_[0] ? *data(x, y, 0) : 0;
-                    ycbcr[1]            = channel_[1] ? *data(x, y, 1) : 0;
-                    ycbcr[2]            = channel_[2] ? *data(x, y, 2) : 0;
-                    rgb                 = Converter::YCbCr2RGB(ycbcr);
-                    RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
+//                    if(channel_[0] && !channel_[1] && !channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 0),
+//                                                      *data(x, y, 0),
+//                                                      *data(x, y, 0)));
+//                    } else if(!channel_[0] && channel_[1] && !channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 1),
+//                                                      *data(x, y, 1),
+//                                                      *data(x, y, 1)));
+//                    } else if(!channel_[0] && !channel_[1] && channel_[2]) {
+//                        RGBdata_->setPixel(x, y, qRgb(*data(x, y, 2),
+//                                                      *data(x, y, 2),
+//                                                      *data(x, y, 2)));
+//                    } else {
+                        ycbcr[0]            = *data(x, y, 0);
+                        ycbcr[1]            = *data(x, y, 1);
+                        ycbcr[2]            = *data(x, y, 2);
+                        rgb                 = Converter::YCbCr2RGB(ycbcr, channel_[0], channel_[1], channel_[2]);
+                        RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
+//                    }
 //                    delete rgb;
                 }
             }
