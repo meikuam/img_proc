@@ -51,7 +51,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::on_openFile_Clicked() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение"),
-                                                    "/", "Image Files (*.png *.jpg *.bmp)");
+                                                    "/", "Image Files (*.png *.jpg *.jpeg *.bmp)");
     openFile(fileName);
 }
 

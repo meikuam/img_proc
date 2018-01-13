@@ -103,7 +103,7 @@ void ImgData::RGBupdate() {
         }
         case Format_HSV: {
             uint8_t* hsv = new uint8_t[3];
-            uint8_t* rgb;
+            uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
 //                    if(channel_[0] && !channel_[1] && !channel_[2]) {
@@ -122,18 +122,19 @@ void ImgData::RGBupdate() {
                         hsv[0]              = *data(x, y, 0);
                         hsv[1]              = *data(x, y, 1);
                         hsv[2]              = *data(x, y, 2);
-                        rgb = Converter::HSV2RGB(hsv, channel_[0], channel_[1], channel_[2]);
+                        Converter::HSV2RGB(hsv, rgb, channel_[0], channel_[1], channel_[2]);
                         RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
 //                    }
-//                    delete rgb;
+
                 }
             }
             delete hsv;
+            delete rgb;
             break;
         }
         case Format_YCbCr: {
             uint8_t* ycbcr = new uint8_t[3];
-            uint8_t* rgb;
+            uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
 //                    if(channel_[0] && !channel_[1] && !channel_[2]) {
@@ -152,13 +153,13 @@ void ImgData::RGBupdate() {
                         ycbcr[0]            = *data(x, y, 0);
                         ycbcr[1]            = *data(x, y, 1);
                         ycbcr[2]            = *data(x, y, 2);
-                        rgb                 = Converter::YCbCr2RGB(ycbcr, channel_[0], channel_[1], channel_[2]);
+                        Converter::YCbCr2RGB(ycbcr, rgb, channel_[0], channel_[1], channel_[2]);
                         RGBdata_->setPixel(x, y, qRgb(rgb[0], rgb[1], rgb[2]));
 //                    }
-//                    delete rgb;
                 }
             }
             delete ycbcr;
+            delete rgb;
             break;
         }
         }
@@ -177,41 +178,41 @@ void ImgData::convertTo(Format f) {
         }
         case Format_HSV: {
             // RGB -> HSV
-            uint8_t* hsv;
+            uint8_t* hsv = new uint8_t[3];
             uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     rgb[0]              = *data(x, y, 0);
                     rgb[1]              = *data(x, y, 1);
                     rgb[2]              = *data(x, y, 2);
-                    hsv                 = Converter::RGB2HSV(rgb);
+                    Converter::RGB2HSV(rgb, hsv);
                     *data(x, y, 0)      = hsv[0];
                     *data(x, y, 1)      = hsv[1];
                     *data(x, y, 2)      = hsv[2];
-//                    delete hsv;
                 }
             }
             delete rgb;
+            delete hsv;
             format_ = Format_HSV;
             break;
         }
         case Format_YCbCr: {
             // RGB -> YCbCr
-            uint8_t* ycbcr;
+            uint8_t* ycbcr = new uint8_t[3];
             uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     rgb[0]              = *data(x, y, 0);
                     rgb[1]              = *data(x, y, 1);
                     rgb[2]              = *data(x, y, 2);
-                    ycbcr               = Converter::RGB2YCbCr(rgb);
+                    Converter::RGB2YCbCr(rgb, ycbcr);
                     *data(x, y, 0)      = ycbcr[0];
                     *data(x, y, 1)      = ycbcr[1];
                     *data(x, y, 2)      = ycbcr[2];
-//                    delete ycbcr;
                 }
             }
             delete rgb;
+            delete ycbcr;
             format_ = Format_YCbCr;
             break;
         }
@@ -222,20 +223,20 @@ void ImgData::convertTo(Format f) {
         case Format_RGB: {
             // HSV -> RGB
             uint8_t* hsv = new uint8_t[3];
-            uint8_t* rgb;
+            uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     hsv[0]              = *data(x, y, 0);
                     hsv[1]              = *data(x, y, 1);
                     hsv[2]              = *data(x, y, 2);
-                    rgb                 = Converter::HSV2RGB(hsv);
+                    Converter::HSV2RGB(hsv, rgb);
                     *data(x, y, 0)      = rgb[0];
                     *data(x, y, 1)      = rgb[1];
                     *data(x, y, 2)      = rgb[2];
-//                    delete rgb;
                 }
             }
             delete hsv;
+            delete rgb;
             format_ = Format_RGB;
             break;
         }
@@ -246,23 +247,24 @@ void ImgData::convertTo(Format f) {
         }
         case Format_YCbCr: {
             // HSV -> RGB -> YCbCr
-            uint8_t* ycbcr;
-            uint8_t* rgb;
+            uint8_t* ycbcr = new uint8_t[3];
+            uint8_t* rgb = new uint8_t[3];
             uint8_t* hsv = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     hsv[0]              = *data(x, y, 0);
                     hsv[1]              = *data(x, y, 1);
                     hsv[2]              = *data(x, y, 2);
-                    rgb                 = Converter::HSV2RGB(hsv);
-                    ycbcr               = Converter::RGB2YCbCr(rgb);
+                    Converter::HSV2RGB(hsv, rgb);
+                    Converter::RGB2YCbCr(rgb, ycbcr);
                     *data(x, y, 0)      = ycbcr[0];
                     *data(x, y, 1)      = ycbcr[1];
                     *data(x, y, 2)      = ycbcr[2];
-//                    delete rgb;
-//                    delete hsv;
+
                 }
             }
+            delete rgb;
+            delete hsv;
             delete ycbcr;
             format_ = Format_YCbCr;
             break;
@@ -274,19 +276,19 @@ void ImgData::convertTo(Format f) {
         case Format_RGB:
         {
             uint8_t* ycbcr = new uint8_t[3];
-            uint8_t* rgb;
+            uint8_t* rgb = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     ycbcr[0]            = *data(x, y, 0);
                     ycbcr[1]            = *data(x, y, 1);
                     ycbcr[2]            = *data(x, y, 2);
-                    rgb                 = Converter::YCbCr2RGB(ycbcr);
+                    Converter::YCbCr2RGB(ycbcr, rgb);
                     *data(x, y, 0)      = rgb[0];
                     *data(x, y, 1)      = rgb[1];
                     *data(x, y, 2)      = rgb[2];
-//                    delete rgb;
                 }
             }
+            delete rgb;
             delete ycbcr;
             format_ = Format_RGB;
             break;
@@ -301,15 +303,15 @@ void ImgData::convertTo(Format f) {
                     ycbcr[0]            = *data(x, y, 0);
                     ycbcr[1]            = *data(x, y, 1);
                     ycbcr[2]            = *data(x, y, 2);
-                    rgb                 = Converter::YCbCr2RGB(ycbcr);
-                    hsv                 = Converter::RGB2HSV(rgb);
+                    Converter::YCbCr2RGB(ycbcr, rgb);
+                    Converter::RGB2HSV(rgb, hsv);
                     *data(x, y, 0)      = hsv[0];
                     *data(x, y, 1)      = hsv[1];
                     *data(x, y, 2)      = hsv[2];
-//                    delete rgb;
-//                    delete hsv;
                 }
             }
+            delete rgb;
+            delete hsv;
             delete ycbcr;
             format_ = Format_HSV;
             break;

@@ -79,7 +79,10 @@ Data2d<Dtype>::Data2d(QImage* img) {
     h_          = img->height();
     c_          = img->depth() / (sizeof(Dtype) * 8);
     data_       = new Dtype[c_ * w_ * h_];
-    memcpy(data_, img->bits(), c_ * w_ * h_);
+    for(int y = 0; y < h_; y++) {
+        memcpy(&(data_[y * w_ * c_]), img->scanLine(y), w_ * c_);
+    }
+//    memcpy(data_, img->bits(), c_ * w_ * h_);
     nulldata_   = false;
 }
 
