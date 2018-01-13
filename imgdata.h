@@ -94,7 +94,8 @@ Data2d<Dtype>::Data2d(const Data2d<Dtype> &data) {
     w_          = data.w_;
     h_          = data.h_;
     c_          = data.c_;
-    data_       = data.data_;
+    data_       = new Dtype[c_ * w_ * h_];
+    memcpy(data_, data.data_, c_ * w_ * h_);
     nulldata_   = data.nulldata_;
 }
 
@@ -105,8 +106,7 @@ Data2d<Dtype>& Data2d<Dtype>::operator = (const Data2d<Dtype>& data) {
     w_          = data.w_;
     h_          = data.h_;
     c_          = data.c_;
-    data_       = new Dtype[c_ * w_ * h_];
-    memcpy(data_, data.data_, c_ * w_ * h_);
+    data_       = data.data_;
     nulldata_   = data.nulldata_;
 }
 
@@ -121,7 +121,6 @@ Dtype* Data2d<Dtype>::operator()(int x, int y, int c){
     // v  abc abc abc
     //
     //   abc - c_ elements
-
     return &(data_[(y * w_ + x) * c_ + c]);
 }
 

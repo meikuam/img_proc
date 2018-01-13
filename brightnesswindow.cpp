@@ -33,8 +33,8 @@ void BrightnessWindow::on_applyButton_clicked()
 
 void BrightnessWindow::on_cancelButton_clicked()
 {
-    delete img;
-    img = local;
+//    delete img;
+    *img = *local;
     setImage(img->img());
     repaint();
     this->close();
@@ -72,17 +72,14 @@ void BrightnessWindow::on_valueEdit_textChanged(const QString &arg1)
 void BrightnessWindow::changeImage() {
 
         for(int x = 0; x < local->width(); x++) {
-            for(int y = 0; y< local->height(); y++){
-                uint8_t* loc_pixel = (*local)(x, y, 0);
-                uint8_t* img_pixel = (*img)(x, y, 0);
+            for(int y = 0; y < local->height(); y++){
+                int a = channels[0] ? (*(*local)(x, y, 0)) + value : (*(*local)(x, y, 0));
+                int b = channels[1] ? (*(*local)(x, y, 1)) + value : (*(*local)(x, y, 1));
+                int c = channels[2] ? (*(*local)(x, y, 2)) + value : (*(*local)(x, y, 2));
 
-                int red             = channels[0] ? (*(*local)(x, y, 0)) + value : (*(*local)(x, y, 0));
-                int green           = channels[1] ? (*(*local)(x, y, 1)) + value : (*(*local)(x, y, 1));
-                int blue            = channels[2] ? (*(*local)(x, y, 2)) + value : (*(*local)(x, y, 2));
-
-                (*(*img)(x, y, 0))  = red   > 255 ? 255 : red   < 0 ? 0 : red;
-                (*(*img)(x, y, 1))  = green > 255 ? 255 : green < 0 ? 0 : green;
-                (*(*img)(x, y, 2))  = blue  > 255 ? 255 : blue  < 0 ? 0 : blue;
+                (*(*img)(x, y, 0))  = a > 255 ? 255 : a < 0 ? 0 : a;
+                (*(*img)(x, y, 1))  = b > 255 ? 255 : b < 0 ? 0 : b;
+                (*(*img)(x, y, 2))  = c > 255 ? 255 : c < 0 ? 0 : c;
             }
         }
         img->RGBupdate();

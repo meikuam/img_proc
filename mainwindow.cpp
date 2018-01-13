@@ -70,6 +70,7 @@ void MainWindow::openFile(QString fileName) {
         ui->imageLabel->setImage(data->img());
         setlistWidget(Format_RGB);
         setMenuEnabled(true);
+        on_RGB_Checked();
     } else {
         ui->imageLabel->setText("Can't handle this format.");
     }

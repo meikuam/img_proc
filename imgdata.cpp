@@ -37,7 +37,7 @@ ImgData::ImgData(const ImgData &imgdata) {
     format_         = imgdata.format_;
 
     RGBdata_        = new QImage(imgdata.RGBdata_->copy());
-    data_           = new Data2d<uint8_t>(RGBdata_);
+    data_           = new Data2d<uint8_t>(*(imgdata.data_));
 }
 
 
@@ -296,8 +296,8 @@ void ImgData::convertTo(Format f) {
         case Format_HSV: {
             // YCbCr -> RGB -> HSV
             uint8_t* ycbcr = new uint8_t[3];
-            uint8_t* rgb;
-            uint8_t* hsv;
+            uint8_t* rgb = new uint8_t[3];
+            uint8_t* hsv = new uint8_t[3];
             for(int x = 0; x < data_->width(); x++) {
                 for(int y = 0; y < data_->height(); y++) {
                     ycbcr[0]            = *data(x, y, 0);
