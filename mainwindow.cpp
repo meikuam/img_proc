@@ -67,7 +67,7 @@ void MainWindow::openFile(QString fileName) {
     data->load(fileName);
 
     if(!data->isNull()) {
-        ui->imageLabel->setImage(data->toImage());
+        ui->imageLabel->setImage(data->img());
         setlistWidget(Format_RGB);
         setMenuEnabled(true);
     } else {
@@ -85,6 +85,7 @@ void MainWindow::on_RGB_Checked() {
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form YCbCr to RGB");
 
+        data->convertTo(Format_RGB);
         setlistWidget(Format_RGB);
         //actions
     } else if(ui->actionHSV->isChecked()) {
@@ -114,6 +115,7 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionYCbCr->setChecked(true);
 
         debugLabel->setText("form RGB to YCbCr");
+        data->convertTo(Format_YCbCr);
 
         setlistWidget(Format_YCbCr);
         //actions
@@ -216,9 +218,10 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
             }
         }
     }
-    ui->imageLabel->setImage(data->toImage(ui->listWidget->item(1)->checkState() == Qt::CheckState::Checked,
-                                           ui->listWidget->item(2)->checkState() == Qt::CheckState::Checked,
-                                           ui->listWidget->item(3)->checkState() == Qt::CheckState::Checked));
+    data->setChannels(ui->listWidget->item(1)->checkState() == Qt::CheckState::Checked,
+                      ui->listWidget->item(2)->checkState() == Qt::CheckState::Checked,
+                      ui->listWidget->item(3)->checkState() == Qt::CheckState::Checked);
+    ui->imageLabel->setImage(data->img());
 }
 
 void MainWindow::setlistWidget(Format format) {
@@ -235,6 +238,7 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
 
+        data->setChannels();
 //        ui->listWidget->selectAll();
         break;
     case Format_HSV:
@@ -249,6 +253,7 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
 
+        data->setChannels();
 //        ui->listWidget->selectAll();
         break;
     case Format_YCbCr:
@@ -263,6 +268,7 @@ void MainWindow::setlistWidget(Format format) {
         ui->listWidget->item(2)->setCheckState(Qt::CheckState::Checked);
         ui->listWidget->item(3)->setCheckState(Qt::CheckState::Checked);
 
+        data->setChannels();
 //        ui->listWidget->selectAll();
         break;
     }
@@ -274,6 +280,7 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->menu_correction->setEnabled(sw);
     ui->saveFileAct->setEnabled(sw);
     ui->saveFileAsAct->setEnabled(sw);
+    ui->toolWidget->show();
 }
 
 //void MainWindow::on_pushButton_clicked()

@@ -35,7 +35,7 @@ void BrightnessWindow::on_cancelButton_clicked()
 {
     delete img;
     img = local;
-    setImage(img->toImage());
+    setImage(img->img());
     repaint();
     this->close();
 }
@@ -71,20 +71,21 @@ void BrightnessWindow::on_valueEdit_textChanged(const QString &arg1)
 
 void BrightnessWindow::changeImage() {
 
-        for(int i = 0; i < local->data()->width(); ++i) {
-            for(int j = 0; j< local->data()->height(); ++j){
-                QRgb p = local->data()->pixel(i, j);
-                int red = channels[0] ? qRed(p) + value : qRed(p);
-                int green = channels[1] ? qGreen(p) + value : qGreen(p);
-                int blue = channels[2] ? qBlue(p) + value : qBlue(p);
+        for(int x = 0; x < local->width(); x++) {
+            for(int y = 0; y< local->height(); y++){
+                uint8_t* loc_pixel = (*local)(x, y, 0);
+                uint8_t* img_pixel = (*img)(x, y, 0);
 
-                red = red > 255 ? 255 : red < 0 ? 0 : red;
-                green = green > 255 ? 255 : green < 0 ? 0 : green;
-                blue = blue > 255 ? 255 : blue < 0 ? 0 : blue;
-                img->data()->setPixel(i, j, qRgb(red, green, blue));
+                int red             = channels[0] ? (*(*local)(x, y, 0)) + value : (*(*local)(x, y, 0));
+                int green           = channels[1] ? (*(*local)(x, y, 1)) + value : (*(*local)(x, y, 1));
+                int blue            = channels[2] ? (*(*local)(x, y, 2)) + value : (*(*local)(x, y, 2));
+
+                (*(*img)(x, y, 0))  = red   > 255 ? 255 : red   < 0 ? 0 : red;
+                (*(*img)(x, y, 1))  = green > 255 ? 255 : green < 0 ? 0 : green;
+                (*(*img)(x, y, 2))  = blue  > 255 ? 255 : blue  < 0 ? 0 : blue;
             }
         }
-        setImage(img->toImage());
+        img->RGBupdate();
         repaint();
 }
 
@@ -108,5 +109,8 @@ void BrightnessWindow::on_channelBox_currentIndexChanged(int index)
         channels[0] = channels[1] = false;
         break;
     }
+    value = 0;
+    ui->valueSlider->setValue(0);
+    ui->valueEdit->setText("0");
 
 }

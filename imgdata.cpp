@@ -1,23 +1,27 @@
 #include "imgdata.h"
 
 
+//-----------------ImgData-------------------
+//--------------constructors-----------------
+
 ImgData::ImgData(){
-    RGBdata     = new QImage();
-    BUFdata     = new QImage();
+    data_       = new Data2d<uint8_t>();
+    RGBdata_    = new QImage();
 }
+
 // create from path
 ImgData::ImgData(QString path) {
     path_       = path;
-    RGBdata     = new QImage(path);
-    *RGBdata    = RGBdata->convertToFormat(QImage::Format_RGB888);
-
-    BUFdata     = new QImage(RGBdata->copy());
-
-    if(!RGBdata->isNull()) {
+    RGBdata_    = new QImage(path_);
+    if(RGBdata_->isNull()) {
+        data_       = new Data2d<uint8_t>();
+    } else {
+        *RGBdata_   = RGBdata_->convertToFormat(QImage::Format_RGB888);
+        data_       = new Data2d<uint8_t>(RGBdata_);
         format_     = Format_RGB;
     }
-    std::cout<<"constructor ImgData"<<std::endl;
 }
+
 //    // create from image
 //    ImgData(QImage img) {
 //        *RGBdata        = img.copy();
@@ -25,99 +29,213 @@ ImgData::ImgData(QString path) {
 //        format_         = Format_RGB;
 //        std::cout<<"constructor ImgData"<<std::endl;
 //    }
-// copy constructor
+
+//---------copy constructor-----------------
 ImgData::ImgData(const ImgData &imgdata) {
     //deep copy
     path_           = imgdata.path_;
     format_         = imgdata.format_;
-    RGBdata         = new QImage(imgdata.RGBdata->copy());
-    BUFdata         = new QImage(imgdata.BUFdata->copy());
-    std::cout<<"copy ImgData"<<std::endl;
+
+    RGBdata_        = new QImage(imgdata.RGBdata_->copy());
+    data_           = new Data2d<uint8_t>(RGBdata_);
 }
 
-// assignment operator
+
+//---------assignment operator--------------
 ImgData& ImgData::operator = (const ImgData& imgdata) {
-    //        delete  RGBdata; // untested
     path_           = imgdata.path_;
     format_         = imgdata.format_;
-    RGBdata         = imgdata.RGBdata;
-    BUFdata         = imgdata.BUFdata;
-    std::cout<<"assignment ImgData  ImgData&"<<std::endl;
+
+    RGBdata_        = imgdata.RGBdata_;
+    data_           = imgdata.data_;
 }
 
 //    // assignment operator
 //    ImgData& operator = (const QImage& img) {
-////        format          = Format_RGB;
 //        RGBdata         = &img;
-//        std::cout<<"assignment ImgData QImage"<<std::endl;
 //    }
 
+//--------------destructor-------------------
 ImgData::~ImgData() {
-    delete RGBdata;
-    delete BUFdata;
-    std::cout<<"~ImgData()"<<std::endl;
+    delete RGBdata_;
+    delete data_;
 }
 
+//--------------class methods----------------
 void ImgData::load(QString path) {
-    delete RGBdata;
-    delete BUFdata;
+    delete RGBdata_;
+    delete data_;
 
     path_       = path;
-    RGBdata     = new QImage(path);
-    //        *RGBdata    = RGBdata->convertToFormat(QImage::Format_RGB888);
-    BUFdata     = new QImage(RGBdata->copy());
-
-    if(!RGBdata->isNull()) {
+    RGBdata_    = new QImage(path);
+    if(RGBdata_->isNull()) {
+        data_       = new Data2d<uint8_t>();
+    } else {
+        *RGBdata_   = RGBdata_->convertToFormat(QImage::Format_RGB888);
+        data_       = new Data2d<uint8_t>(RGBdata_);
         format_     = Format_RGB;
     }
-    std::cout<<"load ImgData"<<std::endl;
 }
 
-bool ImgData::isNull() const {
-    //        std::cout<<"isNull() = "<<RGBdata->isNull()<<std::endl;
-    return RGBdata->isNull();
-}
-
-//    uint8_t* operator() (int x, int y) {
-//        RGB
-//    }
-
-// a, b, c are channels
-QImage* ImgData::toImage(bool a, bool b, bool c) {
+QImage* ImgData::img() {
     if(!isNull()) {
-        for(int x = 0; x < BUFdata->width(); x++) {
-            for(int y = 0; y < BUFdata->height(); y++) {
-                QRgb pix = RGBdata->pixel(x, y);
-                int red         = a ? qRed(pix) : 0;
-                int green       = b ?  qGreen(pix) : 0;
-                int blue        = c ? qBlue(pix) : 0;
-                BUFdata->setPixel(x, y, qRgb(red, green, blue));
-            }
-        }
-        return BUFdata;
+        RGBupdate();
+        return RGBdata_;
     } else {
         return nullptr;
     }
 }
 
-QImage* ImgData::data() {
-    return RGBdata;
-}
-
-Format ImgData::format() {
-    return format_;
-}
-
-void ImgData::flush() {
+void ImgData::RGBupdate() {
+    //TODO: It is assumed that there are three channels
     if(!isNull()) {
-        for(int x = 0; x < BUFdata->width(); x++) {
-            for(int y = 0; y < BUFdata->height(); y++) {
-                QRgb pix = RGBdata->pixel(x, y);
-                int red         = qRed(pix);
-                int green       = qGreen(pix);
-                int blue        = qBlue(pix);
-                BUFdata->setPixel(x, y, qRgb(red, green, blue));
+        switch(format_) {
+        case Format_RGB: {
+            for(int x = 0; x < data_->width(); x++) {
+                for(int y = 0; y < data_->height(); y++) {
+                    int red         = channel_[0] ? *data(x, y, 0) : 0;
+                    int green       = channel_[1] ? *data(x, y, 1) : 0;
+                    int blue        = channel_[2] ? *data(x, y, 2) : 0;
+                    RGBdata_->setPixel(x, y, qRgb(red, green, blue));
+                }
             }
+            break;
+        }
+        case Format_HSV: {
+            break;
+        }
+        case Format_YCbCr: {
+            double  M[3][3] = {{1.0,     0.0,        1.402},
+                               {1.0,     -0.344,     -0.714},
+                               {1.0,     1.722,      0.0}};
+            int     RGB[3];
+            double  YCbCr[3];
+
+            for(int x = 0; x < data_->width(); x++) {
+                for(int y = 0; y < data_->height(); y++) {
+                    YCbCr[0]        = channel_[0] ? *data(x, y, 0)         : 0;
+                    YCbCr[1]        = channel_[1] ? *data(x, y, 1) - 128.0 : 0;
+                    YCbCr[2]        = channel_[2] ? *data(x, y, 2) - 128.0 : 0;
+
+                    RGB[0]          = YCbCr[0] * M[0][0] + YCbCr[1] * M[0][1] + YCbCr[2] * M[0][2];
+                    RGB[1]          = YCbCr[0] * M[1][0] + YCbCr[1] * M[1][1] + YCbCr[2] * M[1][2];
+                    RGB[2]          = YCbCr[0] * M[2][0] + YCbCr[1] * M[2][1] + YCbCr[2] * M[2][2];
+
+                    RGB[0]          = RGB[0] > 255 ? 255 : RGB[0] < 0 ? 0 : RGB[0];
+                    RGB[1]          = RGB[1] > 255 ? 255 : RGB[1] < 0 ? 0 : RGB[1];
+                    RGB[2]          = RGB[2] > 255 ? 255 : RGB[2] < 0 ? 0 : RGB[2];
+
+                    RGBdata_->setPixel(x, y, qRgb(RGB[0], RGB[1], RGB[2]));
+                }
+            }
+            break;
+        }
         }
     }
+}
+
+
+void ImgData::convertTo(Format f) {
+    //TODO: It is assumed that there are three channels
+    switch (format_) {
+    case Format_RGB:
+        switch(f) {
+        case Format_RGB: {
+            // RGB -> RGB
+            break;
+        }
+        case Format_HSV: {
+            // RGB -> HSV
+
+            format_ = Format_HSV;
+            break;
+        }
+        case Format_YCbCr: {
+            // RGB -> YCbCr
+            int     YCbCr[3];
+            double  M[3][3] = {{0.299,     0.587,        0.114},
+                               {-0.169,    -0.331,       0.500},
+                               {0.500,     -0.419,      -0.081}};
+            double  RGB[3];
+
+            for(int x = 0; x < data_->width(); x++) {
+                for(int y = 0; y < data_->height(); y++) {
+
+                    RGB[0]          = *data(x, y, 0);
+                    RGB[1]          = *data(x, y, 1);
+                    RGB[2]          = *data(x, y, 2);
+
+                    YCbCr[0]        = RGB[0] * M[0][0] + RGB[1] * M[0][1] + RGB[2] * M[0][2];
+                    YCbCr[1]        = RGB[0] * M[1][0] + RGB[1] * M[1][1] + RGB[2] * M[1][2] + 128.0;
+                    YCbCr[2]        = RGB[0] * M[2][0] + RGB[1] * M[2][1] + RGB[2] * M[2][2] + 128.0;
+
+                    *data(x, y, 0)   = YCbCr[0] > 255 ? 255 : YCbCr[0] < 0 ? 0 : YCbCr[0];
+                    *data(x, y, 1)   = YCbCr[1] > 255 ? 255 : YCbCr[1] < 0 ? 0 : YCbCr[1];
+                    *data(x, y, 2)   = YCbCr[2] > 255 ? 255 : YCbCr[2] < 0 ? 0 : YCbCr[2];
+                }
+            }
+            format_ = Format_YCbCr;
+            break;
+        }
+        }
+
+        break;
+    case Format_HSV:
+        switch(f) {
+        case Format_RGB: {
+            // HSV -> RGB
+
+            break;
+        }
+        case Format_HSV: {
+            // HSV -> HSV
+
+            break;
+        }
+        case Format_YCbCr: {
+            // HSV -> RGB -> YCbCr
+
+            break;
+        }
+        }
+        break;
+    case Format_YCbCr:
+        switch(f) {
+        case Format_RGB:
+        {
+            double  M[3][3] = {{1.0,     0.0,        1.402},
+                               {1.0,     -0.344,     -0.714},
+                               {1.0,     1.722,      0.0}};
+            int     RGB[3];
+            double  YCbCr[3];
+
+            for(int x = 0; x < data_->width(); x++) {
+                for(int y = 0; y < data_->height(); y++) {
+                    YCbCr[0]        = *data(x, y, 0);
+                    YCbCr[1]        = *data(x, y, 1) - 128.0;
+                    YCbCr[2]        = *data(x, y, 2) - 128.0;
+
+                    RGB[0]          = YCbCr[0] * M[0][0] + YCbCr[1] * M[0][1] + YCbCr[2] * M[0][2];
+                    RGB[1]          = YCbCr[0] * M[1][0] + YCbCr[1] * M[1][1] + YCbCr[2] * M[1][2];
+                    RGB[2]          = YCbCr[0] * M[2][0] + YCbCr[1] * M[2][1] + YCbCr[2] * M[2][2];
+
+                    *data(x, y, 0)   = RGB[0] > 255 ? 255 : RGB[0] < 0 ? 0 : RGB[0];
+                    *data(x, y, 1)   = RGB[1] > 255 ? 255 : RGB[1] < 0 ? 0 : RGB[1];
+                    *data(x, y, 2)   = RGB[2] > 255 ? 255 : RGB[2] < 0 ? 0 : RGB[2];
+                }
+            }
+            format_ = Format_RGB;
+            break;
+        }
+        case Format_HSV: {
+            // YCbCr -> RGB -> HSV
+            break;
+        }
+        case Format_YCbCr: {
+            // YCbCr -> YCbCr
+            break;
+        }
+        }
+    }
+    RGBupdate();
 }
