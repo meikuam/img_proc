@@ -75,7 +75,7 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
          if (w_win < w_orig) {
              if (h_win < h_orig) { // 1
 
-                 qDebug()<<"setImage: 1"<<endl;
+//                 qDebug()<<"setImage: 1"<<endl;
                  x_pix = ((w_orig - w_win) / 2) - dx;
                  y_pix = ((h_orig - h_win) / 2) - dy;
 
@@ -98,7 +98,7 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  verticalSliderHide(false);
              } else { // 2
 
-                 qDebug()<<"setImage: 2"<<endl;
+//                 qDebug()<<"setImage: 2"<<endl;
                  y_pix = 0;
                  x_pix = ((w_orig - w_win) / 2) - dx;
 
@@ -121,7 +121,7 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
          } else {
              if (h_win < h_orig) { // 3
 
-                 qDebug()<<"setImage: 3";
+//                 qDebug()<<"setImage: 3";
                  y_pix = ((h_orig - h_win) / 2) - dy;
                  x_pix = 0;
 
@@ -139,7 +139,7 @@ void ImageLabel::mouseMoveEvent(QMouseEvent *ev) {
                  verticalSliderHide(false);
              } else { // 4
 
-                 qDebug()<<"setImage: 4"<<endl;
+//                 qDebug()<<"setImage: 4"<<endl;
                  x_pix = y_pix = 0;
 
                  w_pix = w_orig;
