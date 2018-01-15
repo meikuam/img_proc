@@ -1,10 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QDebug>
-#include "messagewindow.h"
-#include "ui_messagewindow.h"
 
 #include <QImage>
+#include <QDebug>
 #include <QFileDialog>
 
 
@@ -300,17 +298,6 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->action_layers->setChecked(sw);
     ui->action_channels->setChecked(sw);
 }
-
-//void MainWindow::on_pushButton_clicked()
-//{
-//    if(img != nullptr)
-//    {
-//        mw = new MessageWindow(img, 0);
-//        mw->setAttribute(Qt::WA_DeleteOnClose);
-//        mw->show();
-//    }
-//}
-
 
 
 //MainWindow::mouseDoubleClickEvent( QMouseEvent * e )

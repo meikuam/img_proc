@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 
-#include "messagewindow.h"
 #include "brightnesswindow.h"
 #include "filterwindow.h"
 #include "imgdata.h"
@@ -64,7 +63,6 @@ private slots:
 private:
 
     Ui::MainWindow      *ui;
-    MessageWindow       *mw;
     BrightnessWindow    *bw;
     FilterWindow        *fw;
 
