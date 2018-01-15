@@ -247,6 +247,13 @@
          <item row="0" column="0">
           <widget class="QListWidget" name="layersWidget"/>
          </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="deleteLayerButton">
+           <property name="text">
+            <string>Удалить слои</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </widget>

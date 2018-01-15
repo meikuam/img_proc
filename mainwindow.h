@@ -29,24 +29,17 @@ public:
     ~MainWindow();
     QLabel              *debugLabel;
 
-    ImgData             *data;
+    vector<ImgData*>    data;
+    int curr_data;
 private slots:
-    Q_SLOT
     void on_openFile_Clicked();
-    Q_SLOT
     void on_saveFile_Clicked();
-    Q_SLOT
     void on_saveFileAs_Clicked();
-    Q_SLOT
-    void on_RGB_Checked();
-    Q_SLOT
-    void on_YCbCr_Checked();
-    Q_SLOT
-    void on_HSV_Checked();
-    Q_SLOT
-    void on_Brightness_Clicked();
 
-    Q_SLOT
+    void on_RGB_Checked();
+    void on_YCbCr_Checked();
+    void on_HSV_Checked();
+    void on_Brightness_Clicked();
     void on_Filters_Clicked();
 
     void openFile(QString fileName);
@@ -54,16 +47,19 @@ private slots:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
-    void on_listWidget_itemClicked(QListWidgetItem *item);
-
-    void setlistWidget(Format format);
-    void setlayersWidget();
     void setMenuEnabled(bool);
 
+    void on_listWidget_itemClicked(QListWidgetItem *item);
+    void setlistWidget(Format format);
+
+    void setlayersWidget();
+    void addlayerToWidget(QString);
     void on_layersWidget_itemClicked(QListWidgetItem *item);
+    void on_deleteLayerButton_clicked();
 
     void on_windowChannels_Clicked();
     void on_windowLayers_Clicked();
+
 
 private:
 

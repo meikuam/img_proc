@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent) :
     setAcceptDrops(true);
     setMenuEnabled(false);
 
-    data = new ImgData();
+//    data.push_back(new ImgData());
     debugLabel = new QLabel();
     ui->statusBar->addWidget(debugLabel);
 
@@ -28,7 +28,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete data;
+//    delete data;
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -64,18 +64,22 @@ void MainWindow::on_saveFileAs_Clicked() {
 }
 
 void MainWindow::openFile(QString fileName) {
-    data->load(fileName);
+    data.push_back(new ImgData(fileName));
+//    data.back()->load(fileName);
 
-    if(!data->isNull()) {
-        ui->imageLabel->setImage(data->img());
+    if(!data.back()->isNull()) {
+        ui->imageLabel->setImage(data.back()->img());
+        curr_data = data.size() - 1;
         setlistWidget(Format_RGB);
         setMenuEnabled(true);
         on_RGB_Checked();
+        addlayerToWidget(fileName);
 
-        setlayersWidget();
+//        setlayersWidget();
 
     } else {
         ui->imageLabel->setText("Can't handle this format.");
+        data.pop_back();
     }
 }
 
@@ -89,7 +93,7 @@ void MainWindow::on_RGB_Checked() {
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form YCbCr to RGB");
 
-        data->convertTo(Format_RGB);
+        data[curr_data]->convertTo(Format_RGB);
         setlistWidget(Format_RGB);
         //actions
     } else if(ui->actionHSV->isChecked()) {
@@ -97,7 +101,7 @@ void MainWindow::on_RGB_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form HSV to RGB");
-        data->convertTo(Format_RGB);
+        data[curr_data]->convertTo(Format_RGB);
 
         setlistWidget(Format_RGB);
         //actions
@@ -106,7 +110,7 @@ void MainWindow::on_RGB_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("RGB isChecked");
-        data->convertTo(Format_RGB);
+        data[curr_data]->convertTo(Format_RGB);
         // actions
     }
     ui->imageLabel->repaint();
@@ -120,7 +124,7 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionYCbCr->setChecked(true);
 
         debugLabel->setText("form RGB to YCbCr");
-        data->convertTo(Format_YCbCr);
+        data[curr_data]->convertTo(Format_YCbCr);
 
         setlistWidget(Format_YCbCr);
         //actions
@@ -129,7 +133,7 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(true);
         debugLabel->setText("form HSV to YCbCr");
-        data->convertTo(Format_YCbCr);
+        data[curr_data]->convertTo(Format_YCbCr);
 
         setlistWidget(Format_YCbCr);
         //actions
@@ -138,7 +142,7 @@ void MainWindow::on_YCbCr_Checked() {
         ui->actionHSV->setChecked(false);
         ui->actionYCbCr->setChecked(true);
         debugLabel->setText("YCbCr isChecked");
-        data->convertTo(Format_YCbCr);
+        data[curr_data]->convertTo(Format_YCbCr);
         //actions
     }
     ui->imageLabel->repaint();
@@ -150,7 +154,7 @@ void MainWindow::on_HSV_Checked() {
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form YCbCr to HSV");
-        data->convertTo(Format_HSV);
+        data[curr_data]->convertTo(Format_HSV);
         setlistWidget(Format_HSV);
         //actions
     } else if(ui->actionRGB->isChecked()) {
@@ -158,14 +162,14 @@ void MainWindow::on_HSV_Checked() {
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
         debugLabel->setText("form RGB to HSV");
-        data->convertTo(Format_HSV);
+        data[curr_data]->convertTo(Format_HSV);
         setlistWidget(Format_HSV);
         //actions
     } else {
         ui->actionRGB->setChecked(false);
         ui->actionHSV->setChecked(true);
         ui->actionYCbCr->setChecked(false);
-        data->convertTo(Format_HSV);
+        data[curr_data]->convertTo(Format_HSV);
         debugLabel->setText("HSV isChecked");
         //actions
     }
@@ -173,7 +177,7 @@ void MainWindow::on_HSV_Checked() {
 }
 
 void MainWindow::on_Brightness_Clicked() {
-    bw = new BrightnessWindow(data, ui->listWidget);
+    bw = new BrightnessWindow(data[curr_data], ui->listWidget);
     connect(bw, SIGNAL(repaint()),
             ui->imageLabel, SLOT(repaint()));
     connect(bw, SIGNAL(setImage(QImage*)),
@@ -185,7 +189,7 @@ void MainWindow::on_Brightness_Clicked() {
 }
 
 void MainWindow::on_Filters_Clicked() {
-    fw = new FilterWindow(data);
+    fw = new FilterWindow(data[curr_data]);
     connect(fw, SIGNAL(repaint()),
             ui->imageLabel, SLOT(repaint()));
     connect(fw, SIGNAL(setImage(QImage*)),
@@ -238,10 +242,10 @@ void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
             }
         }
     }
-    data->setChannels(ui->listWidget->item(1)->checkState() == Qt::CheckState::Checked,
+    data[curr_data]->setChannels(ui->listWidget->item(1)->checkState() == Qt::CheckState::Checked,
                       ui->listWidget->item(2)->checkState() == Qt::CheckState::Checked,
                       ui->listWidget->item(3)->checkState() == Qt::CheckState::Checked);
-    ui->imageLabel->setImage(data->img());
+    ui->imageLabel->setImage(data[curr_data]->img());
 }
 
 void MainWindow::setlistWidget(Format format) {
@@ -319,17 +323,49 @@ void MainWindow::setMenuEnabled(bool sw) {
 
 void MainWindow::setlayersWidget() {
     ui->layersWidget->clear();
-    ui->layersWidget->addItem("test");
-    ui->layersWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+//    ui->layersWidget->addItem("test");
+//    ui->layersWidget->item(0)->setCheckState(Qt::CheckState::Checked);
+}
 
+void MainWindow::addlayerToWidget(QString name) {
+    ui->layersWidget->addItem(name.section("/",-1,-1));
+    int num = ui->layersWidget->count() - 1;
+    for(int i = 0; i < ui->layersWidget->count(); i++) {
+        ui->layersWidget->item(i)->setCheckState(Qt::CheckState::Unchecked);
+    }
+    ui->layersWidget->item(num)->setCheckState(Qt::CheckState::Checked);
 }
 
 void MainWindow::on_layersWidget_itemClicked(QListWidgetItem *item)
 {
     if(item->checkState() == Qt::CheckState::Checked) {
-        item->setCheckState(Qt::CheckState::Unchecked);
+
+//        bool check = false;
+//        for(int i = 0; i < ui->layersWidget->count(); i++) {
+//            if(ui->listWidget->item(i)->checkState() == Qt::CheckState::Checked) {
+//                if(item->text() != ui->layersWidget->item(i)->text()) {
+//                    check = true;
+//                    break;
+//                }
+//            }
+//        }
+//        if(check) {
+//            item->setCheckState(Qt::CheckState::Unchecked);
+//        }
     } else {
+        for(int i = 0; i < ui->layersWidget->count(); i++) {
+            ui->layersWidget->item(i)->setCheckState(Qt::CheckState::Unchecked);
+        }
         item->setCheckState(Qt::CheckState::Checked);
+        for(int i = 0; i < ui->layersWidget->count(); i++) {
+            if(ui->layersWidget->item(i)->checkState() == Qt::CheckState::Checked) {
+//                std::cout<<i/*<<" "<<ui->layersWidget->item(i)->text()*/<<std::endl;
+                ui->imageLabel->setImage(data[i]->img());
+                ui->imageLabel->repaint();
+                curr_data = i;
+                setlistWidget(data[i]->format());
+            }
+        }
     }
 
 //    ui->layersWidget->item(i)->setCheckState(Qt::CheckState::Checked);
@@ -359,5 +395,14 @@ void MainWindow::on_windowLayers_Clicked() {
         ui->toolWidget->show();
         ui->layers->setVisible(true);
         ui->toolBox->setCurrentIndex(1);
+    }
+}
+
+void MainWindow::on_deleteLayerButton_clicked() {
+    for(int i = 0; i < ui->layersWidget->count(); i++) {
+//        if(ui->layersWidget->item(i)->checkState() == Qt::CheckState::Checked) {
+                data.erase(data.begin() + i);
+                delete ui->layersWidget->item(i);
+//        }
     }
 }

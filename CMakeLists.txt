@@ -38,6 +38,7 @@ set(HEADERS
     imgdata.h
     converter.h
     filter.h
+    data2d.h
 )
 qt5_wrap_ui(UIS_HDRS
     mainwindow.ui
@@ -45,7 +46,6 @@ qt5_wrap_ui(UIS_HDRS
     brightnesswindow.ui
     filterwindow.ui
 )
-
 
 add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})
 target_link_libraries(${project_name} Qt5::Core Qt5::Gui Qt5::Widgets)
