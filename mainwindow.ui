@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -148,12 +148,21 @@
       <string>Коррекция</string>
      </property>
      <addaction name="action_Brightness"/>
+     <addaction name="action_Filters"/>
     </widget>
     <addaction name="menu_format"/>
     <addaction name="menu_correction"/>
    </widget>
+   <widget class="QMenu" name="menu_window">
+    <property name="title">
+     <string>   Окно</string>
+    </property>
+    <addaction name="action_channels"/>
+    <addaction name="action_layers"/>
+   </widget>
    <addaction name="menu_file"/>
    <addaction name="menu_image"/>
+   <addaction name="menu_window"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -175,7 +184,7 @@
    <property name="minimumSize">
     <size>
      <width>150</width>
-     <height>150</height>
+     <height>169</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -210,7 +219,7 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="channels">
         <property name="geometry">
@@ -218,7 +227,7 @@
           <x>0</x>
           <y>0</y>
           <width>130</width>
-          <height>420</height>
+          <height>380</height>
          </rect>
         </property>
         <attribute name="label">
@@ -227,6 +236,16 @@
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
           <widget class="QListWidget" name="listWidget"/>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="layers">
+        <attribute name="label">
+         <string>Слои</string>
+        </attribute>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0">
+          <widget class="QListWidget" name="layersWidget"/>
          </item>
         </layout>
        </widget>
@@ -294,6 +313,21 @@
   <action name="action_Brightness">
    <property name="text">
     <string>Яркость</string>
+   </property>
+  </action>
+  <action name="action_Filters">
+   <property name="text">
+    <string>Фильтры</string>
+   </property>
+  </action>
+  <action name="action_channels">
+   <property name="text">
+    <string>Каналы</string>
+   </property>
+  </action>
+  <action name="action_layers">
+   <property name="text">
+    <string>Слои</string>
    </property>
   </action>
  </widget>
@@ -431,8 +465,8 @@
    <slot>onVerticalSliderMoved(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>516</x>
-     <y>327</y>
+     <x>652</x>
+     <y>389</y>
     </hint>
     <hint type="destinationlabel">
      <x>199</x>
@@ -483,8 +517,8 @@
      <y>238</y>
     </hint>
     <hint type="destinationlabel">
-     <x>516</x>
-     <y>373</y>
+     <x>652</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -499,8 +533,8 @@
      <y>282</y>
     </hint>
     <hint type="destinationlabel">
-     <x>509</x>
-     <y>282</y>
+     <x>652</x>
+     <y>344</y>
     </hint>
    </hints>
   </connection>
@@ -547,8 +581,8 @@
      <y>282</y>
     </hint>
     <hint type="destinationlabel">
-     <x>509</x>
-     <y>282</y>
+     <x>652</x>
+     <y>344</y>
     </hint>
    </hints>
   </connection>
@@ -568,6 +602,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_Filters</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_Filters_Clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_layers</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_windowLayers_Clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>action_channels</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_windowChannels_Clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>resizeEvent(QResizeEvent*)</signal>
@@ -578,5 +660,8 @@
   <slot>on_HSV_Checked()</slot>
   <slot>on_RGB_Checked()</slot>
   <slot>on_Brightness_Clicked()</slot>
+  <slot>on_Filters_Clicked()</slot>
+  <slot>on_windowChannels_Clicked()</slot>
+  <slot>on_windowLayers_Clicked()</slot>
  </slots>
 </ui>

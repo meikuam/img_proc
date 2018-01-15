@@ -23,8 +23,10 @@ set(SOURCES
     imagelabel.cpp
     scrollbar.cpp
     brightnesswindow.cpp
+    filterwindow.cpp
     imgdata.cpp
     converter.cpp
+    filter.cpp
 )
 set(HEADERS
     mainwindow.h
@@ -32,15 +34,18 @@ set(HEADERS
     imagelabel.h
     scrollbar.h
     brightnesswindow.h
+    filterwindow.h
     imgdata.h
     converter.h
+    filter.h
 )
 qt5_wrap_ui(UIS_HDRS
     mainwindow.ui
     messagewindow.ui
     brightnesswindow.ui
+    filterwindow.ui
 )
 
 
-add_executable(${project_name} ${SOURCES} ${HEADERS} ${UIS_HDRS})
+add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})
 target_link_libraries(${project_name} Qt5::Core Qt5::Gui Qt5::Widgets)

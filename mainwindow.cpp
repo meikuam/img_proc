@@ -71,6 +71,9 @@ void MainWindow::openFile(QString fileName) {
         setlistWidget(Format_RGB);
         setMenuEnabled(true);
         on_RGB_Checked();
+
+        setlayersWidget();
+
     } else {
         ui->imageLabel->setText("Can't handle this format.");
     }
@@ -181,6 +184,14 @@ void MainWindow::on_Brightness_Clicked() {
 
 }
 
+void MainWindow::on_Filters_Clicked() {
+    fw = new FilterWindow(data);
+    connect(fw, SIGNAL(repaint()),
+            ui->imageLabel, SLOT(repaint()));
+    connect(fw, SIGNAL(setImage(QImage*)),
+            ui->imageLabel, SLOT(setImage(QImage*)));
+    fw->show();
+}
 
 void MainWindow::on_listWidget_itemClicked(QListWidgetItem *item) {
 
@@ -280,7 +291,10 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->menu_correction->setEnabled(sw);
     ui->saveFileAct->setEnabled(sw);
     ui->saveFileAsAct->setEnabled(sw);
+
     ui->toolWidget->show();
+    ui->action_layers->setChecked(sw);
+    ui->action_channels->setChecked(sw);
 }
 
 //void MainWindow::on_pushButton_clicked()
@@ -303,10 +317,47 @@ void MainWindow::setMenuEnabled(bool sw) {
 //    }
 //}
 
+void MainWindow::setlayersWidget() {
+    ui->layersWidget->clear();
+    ui->layersWidget->addItem("test");
+    ui->layersWidget->item(0)->setCheckState(Qt::CheckState::Checked);
 
-//void MainWindow::resizeEvent(QResizeEvent* event)
-//{
-//   QMainWindow::resizeEvent(event);
+}
 
-//   // Your code here.
-//}
+void MainWindow::on_layersWidget_itemClicked(QListWidgetItem *item)
+{
+    if(item->checkState() == Qt::CheckState::Checked) {
+        item->setCheckState(Qt::CheckState::Unchecked);
+    } else {
+        item->setCheckState(Qt::CheckState::Checked);
+    }
+
+//    ui->layersWidget->item(i)->setCheckState(Qt::CheckState::Checked);
+}
+
+
+void MainWindow::on_windowChannels_Clicked() {
+    if(ui->action_channels->isChecked()) {
+        ui->action_channels->setChecked(false);
+        ui->toolBox->setCurrentIndex(1);
+        ui->channels->setVisible(false);
+    } else {
+        ui->action_channels->setChecked(true);
+        ui->toolWidget->show();
+        ui->channels->setVisible(true);
+        ui->toolBox->setCurrentIndex(0);
+    }
+}
+
+void MainWindow::on_windowLayers_Clicked() {
+    if(ui->action_channels->isChecked()) {
+        ui->action_channels->setChecked(false);
+        ui->toolBox->setCurrentIndex(0);
+        ui->layers->setVisible(false);
+    } else {
+        ui->action_channels->setChecked(true);
+        ui->toolWidget->show();
+        ui->layers->setVisible(true);
+        ui->toolBox->setCurrentIndex(1);
+    }
+}

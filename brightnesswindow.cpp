@@ -2,10 +2,8 @@
 #include "ui_brightnesswindow.h"
 
 #include <iostream>
-//#include <QMessageBox>
 #include <QDebug>
 #include <QVector>
-//void changeImage(QImage *img, int val);
 
 BrightnessWindow::BrightnessWindow(ImgData *data, QListWidget* listWidget, QWidget *parent) :
     QMainWindow(parent),
