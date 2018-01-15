@@ -18,10 +18,12 @@ class FilterWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit FilterWindow(ImgData *data, QWidget *parent = 0 );
+    explicit FilterWindow(ImgData *inp, ImgData *out, QWidget *parent = 0 );
     ~FilterWindow();
-    ImgData *img,
-            *local;
+    ImgData *input,
+            *output;
+
+    Method  method;
 //    int value;
 //    bool channels[3];
 
@@ -37,11 +39,13 @@ private slots:
 //    void changeImage();
 //    void on_channelBox_currentIndexChanged(int index);
 
+    void on_filterBox_currentIndexChanged(int index);
+
 private:
     Ui::FilterWindow *ui;
     vector<QTableWidget*>   tables;
     vector<QLabel*>         labels;
-    void addTableAt(Filter* f, int row, int col);
+    void addTable(Method f);
 };
 
 #endif // FILTERWINDOW_H

@@ -187,7 +187,10 @@ void MainWindow::on_Brightness_Clicked() {
 }
 
 void MainWindow::on_Filters_Clicked() {
-    fw = new FilterWindow(data[curr_data]);
+    data.push_back(new ImgData(*(data[curr_data])));
+    addlayerToWidget("Фильтрованое");
+
+    fw = new FilterWindow(data[curr_data], data[curr_data + 1]);
     connect(fw, SIGNAL(repaint()),
             ui->imageLabel, SLOT(repaint()));
     connect(fw, SIGNAL(setImage(QImage*)),
