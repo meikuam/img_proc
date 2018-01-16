@@ -19,7 +19,8 @@ class ImgData{
     //TODO: Datatype is hardcoded
     Data2d<uint8_t> *data_;
     QImage          *RGBdata_;
-    QString         path_;
+    QString         path_,
+                    name_;
     //TODO: Channel num is hardcoded
     bool            channel_[3] = {true, true, true};
 
@@ -77,6 +78,13 @@ public:
 
     void RGBupdate();
     void convertTo(Format f);
+    inline void setName(QString name) {
+        name_ = name;
+    }
+
+    inline QString getName() {
+        return name_;
+    }
 };
 
 #endif // IMGDATA_H

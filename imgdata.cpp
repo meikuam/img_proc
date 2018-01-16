@@ -19,6 +19,7 @@ ImgData::ImgData(QString path) {
         *RGBdata_   = RGBdata_->convertToFormat(QImage::Format_RGB888);
         data_       = new Data2d<uint8_t>(RGBdata_);
         format_     = Format_RGB;
+        name_       = path.section("/",-1,-1);
     }
 }
 
@@ -36,6 +37,7 @@ ImgData::ImgData(const ImgData &imgdata) {
     path_           = imgdata.path_;
     format_         = imgdata.format_;
 
+    name_           = name_;
     RGBdata_        = new QImage(imgdata.RGBdata_->copy());
     data_           = new Data2d<uint8_t>(*(imgdata.data_));
 }
@@ -46,6 +48,7 @@ ImgData& ImgData::operator = (const ImgData& imgdata) {
     path_           = imgdata.path_;
     format_         = imgdata.format_;
 
+    name_           = imgdata.name_;
     RGBdata_        = imgdata.RGBdata_;
     data_           = imgdata.data_;
 }
@@ -74,6 +77,7 @@ void ImgData::load(QString path) {
         *RGBdata_   = RGBdata_->convertToFormat(QImage::Format_RGB888);
         data_       = new Data2d<uint8_t>(RGBdata_);
         format_     = Format_RGB;
+        name_       = path.section("/",-1,-1);
     }
 }
 

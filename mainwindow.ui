@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -183,13 +183,13 @@
   <widget class="QDockWidget" name="toolWidget">
    <property name="minimumSize">
     <size>
-     <width>150</width>
+     <width>220</width>
      <height>169</height>
     </size>
    </property>
    <property name="maximumSize">
     <size>
-     <width>150</width>
+     <width>220</width>
      <height>524287</height>
     </size>
    </property>
@@ -226,8 +226,8 @@
          <rect>
           <x>0</x>
           <y>0</y>
-          <width>130</width>
-          <height>380</height>
+          <width>200</width>
+          <height>393</height>
          </rect>
         </property>
         <attribute name="label">
@@ -240,6 +240,14 @@
         </layout>
        </widget>
        <widget class="QWidget" name="layers">
+        <property name="geometry">
+         <rect>
+          <x>0</x>
+          <y>0</y>
+          <width>200</width>
+          <height>393</height>
+         </rect>
+        </property>
         <attribute name="label">
          <string>Слои</string>
         </attribute>
