@@ -26,6 +26,12 @@ Mask::Mask(Method method) {
     }
     case Morphology:
     {
+        w_ = 5; h_ = 5; dims_ = 1;
+        m_ = new double[w_ * h_ * dims_] { 0.0,   0.0,    1.0,    0.0,  0.0,
+                                           0.0,   1.0,    1.0,    1.0,  0.0,
+                                           1.0,   1.0,    1.0,    1.0,  1.0,
+                                           0.0,   1.0,    1.0,    1.0,  0.0,
+                                           0.0,   0.0,    1.0,    0.0,  0.0};
         break;
     }
     case Prewitt:
@@ -95,6 +101,38 @@ void Filter::filter(ImgData *src,
     }
     case Morphology:
     {
+        Mask m(Morphology);
+        // G = A \ (A - B)
+        //erosy
+        for(int x = 1; x < src->width() - 1; x++) {
+            for(int y = 1; y < src->height() - 1; y++) {
+                bool res = true;
+
+                for(int s = -1; s <= 1; s++) {
+                    for(int t = -1; t <= 1; t++) {
+                        if(m(1 + s, 1 + t, 0) == 1 && (*(*src)(x + s, y + t, 0)) == 0) {
+                            res = false;
+                            break;
+                        }
+                    }
+                }
+                for(int c = 0; c < src->depth(); c++) {
+                    *((*dst)(x, y, c)) = res ? 255 : 0;
+                }
+            }
+        }
+        //rasnost'
+        for(int x = 1; x < src->width() - 1; x++) {
+            for(int y = 1; y < src->height() - 1; y++) {
+                for(int c = 0; c < src->depth(); c++) {
+                     if((*(*src)(x, y, c)) != 0 && *((*dst)(x, y, c)) == 0) {
+                         *((*dst)(x, y, c)) = 255;
+                     } else {
+                         *((*dst)(x, y, c)) = 0;
+                     }
+                }
+            }
+        }
         break;
     }
     case Prewitt:
@@ -140,8 +178,14 @@ void Filter::filter(ImgData *src,
 
         for(int x = 0; x < src->width(); x++) {
             for(int y = 0; y < src->height(); y++) {
+                int val = 0;
                 for(int c = 0; c < src->depth(); c++) {
-                    *((*dst)(x, y, 0)) = (*(*src)(x, y, 0)) >= t ? 255 : 0;
+                   val += (*(*src)(x, y, c));
+                }
+                val/= src->depth();
+
+                for(int c = 0; c < src->depth(); c++) {
+                    *((*dst)(x, y, c)) = val >= t ? 255 : 0;
                 }
             }
         }

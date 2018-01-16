@@ -110,6 +110,32 @@ void FilterWindow::addTable(Method f) {
     }
     case Morphology:
     {
+        tables.clear();
+        labels.clear();
+
+//        removeRow(ui->gridLayout, 0, true);
+//        removeRow(ui->gridLayout, 1, true);
+        Mask m(Morphology);
+        tables.push_back(new QTableWidget(this));
+
+        tables[0]->horizontalHeader()->setDefaultSectionSize(30);
+        tables[0]->setRowCount(m.height());
+        tables[0]->setColumnCount(m.width());
+        for(int x = 0; x < m.width(); x++) {
+            for(int y = 0; y < m.height(); y++) {
+                tables[0]->setItem(y, x, new QTableWidgetItem(QString::number(m(x,y,0))));
+            }
+        }
+
+        labels.push_back(new QLabel(this));
+        labels.back()->setText("Примитив эрозии");
+        labels.push_back(new QLabel(this));
+        labels.back()->setText("");
+        ui->gridLayout->addWidget(labels[0], 0, 0);
+        ui->gridLayout->addWidget(tables[0], 1, 0);
+
+        ui->gridLayout->addWidget(labels[1], 1, 0);
+        ui->gridLayout->addWidget(labels[1], 1, 1);
         break;
     }
     case Prewitt:
@@ -146,7 +172,6 @@ void FilterWindow::addTable(Method f) {
 
         ui->gridLayout->addWidget(tables[0], 1, 0);
         ui->gridLayout->addWidget(tables[1], 1, 1);
-        break;
         break;
     }
     case Canny:
