@@ -45,7 +45,7 @@ private:
     Ui::FilterWindow *ui;
     vector<QTableWidget*>   tables;
     vector<QLabel*>         labels;
-    void addTable(Method f);
+//    void addTable(Method f);
 };
 
 #endif // FILTERWINDOW_H

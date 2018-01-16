@@ -10,13 +10,14 @@ using namespace std;
 
 
 enum Method {
-    Sobel,          //Собеля
-    Morphology,     //Математической морфологии
-    Prewitt,        //Превитта
-    Canny,          //Канни
-    Laplas,         //Лапласа
-    Roberts,        //Робертса
-    Binary
+    Sobel,          //0 Собеля
+    Morphology,     //1 Математической морфологии
+    Prewitt,        //2 Превитта
+    Canny,          //3 Канни
+    Laplas,         //4 Лапласа
+    Roberts,        //5 Робертса
+    Binary,         //6
+    Gauss           //7
 };
 
 class Mask {
@@ -50,6 +51,7 @@ public:
 //    static void filter(Data2d<uint8_t>* src,
 //                       Data2d<uint8_t>* dst,
 //                       Method method);
+
     static void filter(ImgData* src,
                        ImgData* dst,
                        Method method);

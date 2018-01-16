@@ -58,38 +58,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="filterBox">
-        <item>
-         <property name="text">
-          <string>Собеля</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Математической морфологии</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Превитта</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Канни</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Лапласа</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Робертса</string>
-         </property>
-        </item>
-       </widget>
+       <widget class="QComboBox" name="filterBox"/>
       </item>
       <item>
        <spacer name="horizontalSpacer_2">
