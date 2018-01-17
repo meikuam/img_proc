@@ -19,7 +19,7 @@ BrightnessWindow::BrightnessWindow(ImgData *data, QListWidget* listWidget, QWidg
 
 BrightnessWindow::~BrightnessWindow()
 {
-    std::cout<<"~BrightnessWindow()"<<endl;
+//    std::cout<<"~BrightnessWindow()"<<endl;
     delete ui;
 }
 
@@ -42,7 +42,7 @@ void BrightnessWindow::on_valueSlider_valueChanged(int value)
 {
     this->value = value;
     ui->valueEdit->setText(QString::number(this->value));
-    std::cout<<"value"<<value<<std::endl;
+//    std::cout<<"value"<<value<<std::endl;
     changeImage();
 }
 

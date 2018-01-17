@@ -79,6 +79,14 @@ void MainWindow::on_Filters_Clicked() {
     fw->show();
     on_windowLayers_Clicked();
 }
+void MainWindow::on_transforms_Clicked() {
+    tw = new TransformsWindow(getCurrentLayer());
+    connect(tw, SIGNAL(setImgData(ImgData*)),
+            this, SLOT(addLayer(ImgData*)));
+    tw->setAttribute(Qt::WA_DeleteOnClose);
+    tw->show();
+    on_windowLayers_Clicked();
+}
 
 // ----------------------------------------------------
 // ------------------ layers --------------------------
@@ -323,12 +331,13 @@ void MainWindow::on_windowLayers_Clicked() {
 
 void MainWindow::setMenuEnabled(bool sw) {
     //ui->menu_file // Файл
-    ui->menu_format->setEnabled(sw);
-    ui->menu_correction->setEnabled(sw);
-
-    //ui->menu_image // Изображение
     ui->saveFileAct->setEnabled(sw);
     ui->saveFileAsAct->setEnabled(sw);
+
+    //ui->menu_image // Изображение
+    ui->menu_format->setEnabled(sw);
+    ui->menu_correction->setEnabled(sw);
+    ui->action_transforms->setEnabled(sw);
 
     //ui->menu_window // Окно
     ui->action_channels->setEnabled(sw);

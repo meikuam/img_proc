@@ -5,6 +5,7 @@
 
 #include "brightnesswindow.h"
 #include "filterwindow.h"
+#include "transformswindow.h"
 #include "imgdata.h"
 
 #include <QtWidgets>
@@ -15,6 +16,7 @@ namespace Ui {
 class MainWindow;
 class BrightnessWindow;
 class FilterWindow;
+class TransformsWindow;
 class ImageLabel;
 class ImgData;
 }
@@ -58,11 +60,14 @@ private slots:
 
     void on_channelsWidget_itemClicked(QListWidgetItem *item);
 
+    void on_transforms_Clicked();
+
 private:
 
     Ui::MainWindow      *ui;
     BrightnessWindow    *bw;
     FilterWindow        *fw;
+    TransformsWindow    *tw;
 
 protected:
 };

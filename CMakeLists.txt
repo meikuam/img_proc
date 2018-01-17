@@ -23,9 +23,11 @@ set(SOURCES
     scrollbar.cpp
     brightnesswindow.cpp
     filterwindow.cpp
+    transformswindow.cpp
     imgdata.cpp
     converter.cpp
     filter.cpp
+    transforms.cpp
 )
 set(HEADERS
     mainwindow.h
@@ -33,6 +35,8 @@ set(HEADERS
     scrollbar.h
     brightnesswindow.h
     filterwindow.h
+    transformswindow.h
+    transforms.h
     imgdata.h
     converter.h
     filter.h
@@ -42,6 +46,7 @@ qt5_wrap_ui(UIS_HDRS
     mainwindow.ui
     brightnesswindow.ui
     filterwindow.ui
+    transformswindow.ui
 )
 
 add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})
