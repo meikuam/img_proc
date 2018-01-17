@@ -79,8 +79,6 @@ void MainWindow::on_Filters_Clicked() {
     fw->show();
 }
 
-
-
 // ----------------------------------------------------
 // ------------------ layers --------------------------
 void MainWindow::addLayer(QString fileName) {
