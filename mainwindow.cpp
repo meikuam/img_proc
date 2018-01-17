@@ -68,7 +68,7 @@ void MainWindow::on_Brightness_Clicked() {
 
     bw->setAttribute(Qt::WA_DeleteOnClose);
     bw->show();
-
+    on_windowChannels_Clicked();
 }
 
 void MainWindow::on_Filters_Clicked() {
@@ -77,6 +77,7 @@ void MainWindow::on_Filters_Clicked() {
             this, SLOT(addLayer(ImgData*)));
     fw->setAttribute(Qt::WA_DeleteOnClose);
     fw->show();
+    on_windowLayers_Clicked();
 }
 
 // ----------------------------------------------------

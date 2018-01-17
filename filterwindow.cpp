@@ -87,6 +87,7 @@ FilterWindow::FilterWindow(ImgData *inp, QWidget *parent) :
     ui->filterBox->addItem("Робертса");                     // 5
     ui->filterBox->addItem("Бинаризации");                  // 6
     ui->filterBox->addItem("Фильтр Гаусса");                // 7
+    ui->filterBox->addItem("Оттенки серого");               // 8
 
 //    on_filterBox_currentIndexChanged(0);
 }
@@ -217,9 +218,9 @@ void FilterWindow::on_filterBox_currentIndexChanged(int index)
         removeRow(ui->gridLayout, 1, true);
         removeRow(ui->gridLayout, 2, true);
         removeRow(ui->gridLayout, 3, true);
-        labels.push_back(new QLabel(this));
-        labels.back()->setText("Еще не реализовано");
-        ui->gridLayout->addWidget(labels[0], 0, 0);
+//        labels.push_back(new QLabel(this));
+//        labels.back()->setText("Еще не реализовано");
+//        ui->gridLayout->addWidget(labels[0], 0, 0);
         break;
     }
     case 4:

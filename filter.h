@@ -17,7 +17,8 @@ enum Method {
     Laplas,         //4 Лапласа
     Roberts,        //5 Робертса
     Binary,         //6
-    Gauss           //7
+    Gauss,          //7
+    Gray            //8
 };
 
 class Mask {

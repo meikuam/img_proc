@@ -99,18 +99,8 @@ void Filter::filter(ImgData *src,
     {
         Mask m(Sobel);
 
-        Data2d<uint8_t>* gray = new Data2d<uint8_t>(src->width(), src->height(), 1);
-
-        for(int x = 0; x < gray->width(); x++) {
-            for(int y = 0; y < gray->height(); y++) {
-                double g = 0.0;
-                for(int c = 0; c < src->depth(); c++) {
-                    g += (*(*src)(x, y, c)) * 1.0;
-                }
-                g /= 3.0;
-                *((*gray)(x, y, 0)) = (uint8_t)g;
-            }
-        }
+        ImgData* gray = new ImgData(*src);
+        filter(src, gray, Gray);
         ImgData* buf = new ImgData(*src);
 
         for(int x = m.width()/2; x < src->width() - m.width()/2; x++) {
@@ -183,18 +173,9 @@ void Filter::filter(ImgData *src,
     {
         Mask m(Prewitt);
 
-        Data2d<uint8_t>* gray = new Data2d<uint8_t>(src->width(), src->height(), 1);
 
-        for(int x = 0; x < gray->width(); x++) {
-            for(int y = 0; y < gray->height(); y++) {
-                double g = 0.0;
-                for(int c = 0; c < src->depth(); c++) {
-                    g += (*(*src)(x, y, c)) * 1.0;
-                }
-                g /= 3.0;
-                *((*gray)(x, y, 0)) = (uint8_t)g;
-            }
-        }
+        ImgData* gray = new ImgData(*src);
+        filter(src, gray, Gray);
         ImgData* buf = new ImgData(*src);
 
         for(int x = m.width()/2; x < src->width() - m.width()/2; x++) {
@@ -228,17 +209,8 @@ void Filter::filter(ImgData *src,
 
         // Фильтр Собеля
 
-        Data2d<uint8_t>* gray = new Data2d<uint8_t>(src->width(), src->height(), 1);
-        for(int x = 0; x < gray->width(); x++) {
-            for(int y = 0; y < gray->height(); y++) {
-                double g = 0.0;
-                for(int c = 0; c < src->depth(); c++) {
-                    g += (*(*gauss)(x, y, c)) * 1.0;
-                }
-                g /= 3.0;
-                *((*gray)(x, y, 0)) = (uint8_t)g;
-            }
-        }
+        ImgData* gray = new ImgData(*src);
+        filter(src, gray, Gray);
 
         Data2d<uint8_t>* sobel = new Data2d<uint8_t>(src->width(), src->height(), 2);
         Mask m(Sobel);
@@ -361,18 +333,16 @@ void Filter::filter(ImgData *src,
     {
         uint8_t t = 127;
 
+        ImgData* gray = new ImgData(*src);
+        filter(src, gray, Gray);
         for(int x = 0; x < src->width(); x++) {
             for(int y = 0; y < src->height(); y++) {
-                int val = 0;
                 for(int c = 0; c < src->depth(); c++) {
-                   val += (*(*src)(x, y, c));
-                }
-                val/= src->depth();
-                for(int c = 0; c < src->depth(); c++) {
-                    *((*dst)(x, y, c)) = val >= t ? 255 : 0;
+                    *((*dst)(x, y, c)) = (*(*gray)(x, y, c)) >= t ? 255 : 0;
                 }
             }
         }
+        delete gray;
         dst->setName(src->getName() + " бинарный фильтр");
         break;
     }
@@ -393,6 +363,24 @@ void Filter::filter(ImgData *src,
             }
         }
         dst->setName(src->getName() + " фильтр Гаусса");
+        break;
+    }
+    case Gray: //8
+    {
+        for(int x = 0; x < src->width(); x++) {
+            for(int y = 0; y < src->height(); y++) {
+                double g = 0.0;
+                for(int c = 0; c < src->depth(); c++) {
+                    g += (*(*src)(x, y, c)) * 1.0;
+                }
+                g /= src->depth();
+
+                for(int c = 0; c < src->depth(); c++) {
+                    *((*dst)(x, y, c)) = (uint8_t)g;
+                }
+            }
+        }
+        dst->setName(src->getName() + " оттенки серого");
         break;
     }
     }
