@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -219,7 +219,7 @@
         <enum>QFrame::Plain</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <widget class="QWidget" name="channels">
         <property name="geometry">
@@ -227,7 +227,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>393</height>
+          <height>380</height>
          </rect>
         </property>
         <attribute name="label">
@@ -235,7 +235,7 @@
         </attribute>
         <layout class="QGridLayout" name="gridLayout_3">
          <item row="0" column="0">
-          <widget class="QListWidget" name="listWidget"/>
+          <widget class="QListWidget" name="channelsWidget"/>
          </item>
         </layout>
        </widget>
@@ -245,7 +245,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>393</height>
+          <height>380</height>
          </rect>
         </property>
         <attribute name="label">
@@ -258,7 +258,7 @@
          <item row="1" column="0">
           <widget class="QPushButton" name="deleteLayerButton">
            <property name="text">
-            <string>Удалить слои</string>
+            <string>Удалить слой</string>
            </property>
           </widget>
          </item>

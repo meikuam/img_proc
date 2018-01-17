@@ -117,6 +117,7 @@ void Filter::filter(ImgData *src,
                 *((*dst)(x, y, 2)) = res;
             }
         }
+        dst->setName("Фильтр Собеля");
         break;
     }
     case Morphology: //1
@@ -158,6 +159,8 @@ void Filter::filter(ImgData *src,
             }
         }
         delete buf;
+
+        dst->setName("Фильтр Математической морфологии");
         break;
     }
     case Prewitt: //2
@@ -182,19 +185,23 @@ void Filter::filter(ImgData *src,
                 *((*dst)(x, y, 2)) = res;
             }
         }
+        dst->setName("Фильтр Математической морфологии");
         break;
     }
     case Canny: //3
     {
+        dst->setName("Фильтр Математической морфологии");
         break;
     }
     case Laplas: //4
     {
 
+        dst->setName("Фильтр Лапласа");
         break;
     }
     case Roberts: //5
     {
+        dst->setName("Фильтр Робертса");
         break;
     }
     case Binary: //6
@@ -213,6 +220,7 @@ void Filter::filter(ImgData *src,
                 }
             }
         }
+        dst->setName("Бинарный фильтр");
         break;
     }
     case Gauss: //7
@@ -231,6 +239,7 @@ void Filter::filter(ImgData *src,
                 }
             }
         }
+        dst->setName("Фильтр Гаусса");
         break;
     }
     }

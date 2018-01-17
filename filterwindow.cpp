@@ -71,14 +71,13 @@ void removeColumn(QGridLayout *layout, int column, bool deleteWidgets) {
 //-----------------</stackoverflow code>------------------
 
 
-FilterWindow::FilterWindow(ImgData *inp, ImgData *out, QWidget *parent) :
+FilterWindow::FilterWindow(ImgData *inp, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::FilterWindow)
 {
     ui->setupUi(this);
 
     input = inp;
-    output = out;
 
     ui->filterBox->addItem("Собеля");                       // 0
     ui->filterBox->addItem("Математической морфологии");    // 1
@@ -99,9 +98,10 @@ FilterWindow::~FilterWindow()
 
 void FilterWindow::on_applyButton_clicked()
 {
+    ImgData* output = new ImgData(*input);
     Filter::filter(input, output, method);
-    setImage(output->img());
-    repaint();
+    setImgData(output);
+
     this->close();
 }
 
