@@ -23,7 +23,8 @@ public:
     ImgData *input,
             *output;
 
-    Method  method;
+    Transform transform;
+    Direction direction;
 
     Q_SIGNAL
     void setImgData(ImgData* out);

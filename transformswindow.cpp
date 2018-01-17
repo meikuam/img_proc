@@ -24,6 +24,14 @@ TransformsWindow::~TransformsWindow()
 void TransformsWindow::on_applyButton_clicked()
 {
     ImgData* output = new ImgData(*input);
+
+    if(ui->radioForwardButton->isChecked()) {
+        direction = Forward;
+    } else if (ui->radioBackwardButton->isChecked()) {
+        direction = Backward;
+    }
+    int iterations = ui->iterationsSpinBox->value();
+    Transforms::transform(input, output, transform, direction, iterations);
     setImgData(output);
 
     this->close();
@@ -39,12 +47,12 @@ void TransformsWindow::on_transformBox_currentIndexChanged(int index)
     switch(index) {
     case 0:
     {
-        //Haar
+        transform = Transform_Haar;
         break;
     }
     case 1:
     {
-        //Dobeshi
+        transform = Transform_Dobeshi;
         break;
     }
     }
