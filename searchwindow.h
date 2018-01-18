@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QLabel>
+#include <QFileDialog>
 
 #include "imgdata.h"
 #include "search.h"
@@ -17,10 +18,12 @@ class SearchWindow : public QMainWindow
 {
     Q_OBJECT
 
+    Method method_;
 public:
     explicit SearchWindow(ImgData *inp, QWidget *parent = 0 );
     ~SearchWindow();
     ImgData *input,
+            *mask,
             *output;
 
     Q_SIGNAL
@@ -32,7 +35,9 @@ private slots:
 
     void on_getMaskButton_clicked();
 
-    private:
+    void on_comboBox_currentIndexChanged(int index);
+
+private:
     Ui::SearchWindow    *ui;
 };
 

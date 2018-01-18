@@ -37,7 +37,7 @@ ImgData::ImgData(const ImgData &imgdata) {
     path_           = imgdata.path_;
     format_         = imgdata.format_;
 
-    name_           = name_;
+    name_           = imgdata.name_;
     RGBdata_        = new QImage(imgdata.RGBdata_->copy());
     data_           = new Data2d<uint8_t>(*(imgdata.data_));
 }

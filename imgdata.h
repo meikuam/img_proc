@@ -85,6 +85,9 @@ public:
     inline QString getName() {
         return name_;
     }
+    inline QString getPath() {
+        return path_;
+    }
 };
 
 #endif // IMGDATA_H

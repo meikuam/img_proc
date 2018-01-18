@@ -354,7 +354,7 @@
   </action>
   <action name="action_search">
    <property name="text">
-    <string>Поиск по примитиву</string>
+    <string>Морфологические штуки</string>
    </property>
   </action>
  </widget>

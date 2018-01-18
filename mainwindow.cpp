@@ -52,10 +52,18 @@ void MainWindow::on_openFile_Clicked() {
 
 void MainWindow::on_saveFile_Clicked() {
     debugLabel->setText("saveFile");
+    ImgData* buf = getCurrentLayer();
+    buf->img()->save(buf->getPath());
 }
 
 void MainWindow::on_saveFileAs_Clicked() {
     debugLabel->setText("saveFileAs");
+    ImgData* buf = getCurrentLayer();
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
+                                 buf->getPath(),
+                                 tr("Images (*.png *.jpg *.jpeg *.bmp)"));
+//    QString path = QFileDialog::getSaveFileUrl(this, tr("Сохранить как.."), "/");//, "Image Files (*.png *.jpg *.jpeg *.bmp)");
+    buf->img()->save(fileName);
 }
 
 void MainWindow::on_Brightness_Clicked() {
@@ -96,7 +104,6 @@ void MainWindow::on_search_Clicked() {
     sw->setAttribute(Qt::WA_DeleteOnClose);
     sw->show();
     on_windowLayers_Clicked();
-
 }
 
 // ----------------------------------------------------
@@ -349,7 +356,7 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->menu_format->setEnabled(sw);
     ui->menu_correction->setEnabled(sw);
     ui->action_transforms->setEnabled(sw);
-
+    ui->action_search->setEnabled(sw);
     //ui->menu_window // Окно
     ui->action_channels->setEnabled(sw);
     ui->action_layers->setEnabled(sw);

@@ -38,7 +38,7 @@
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>Преобразования</string>
+   <string>Морфологические штуки</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <property name="sizePolicy">
@@ -60,7 +60,11 @@
      </layout>
     </item>
     <item>
-     <layout class="QGridLayout" name="gridLayout"/>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QComboBox" name="comboBox"/>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_2">
@@ -120,7 +124,7 @@
          </size>
         </property>
         <property name="text">
-         <string>Отменить</string>
+         <string>Закрыть</string>
         </property>
        </widget>
       </item>

@@ -18,7 +18,15 @@ enum Method {
     Roberts,        //5 Робертса
     Binary,         //6
     Gauss,          //7
-    Gray            //8
+    Gray,           //8
+
+    Erosion,
+    Dilation,
+    Subtraction,
+    Inversion,
+    HitOrMiss,
+    Union,
+    Intersection
 };
 
 class Mask {
@@ -56,6 +64,10 @@ public:
     static void filter(ImgData* src,
                        ImgData* dst,
                        Method method);
+    static void morphFilter(ImgData *src,
+                             ImgData *dst,
+                             ImgData *mask,
+                             Method method);
 };
 
 #endif // FILTER_H
