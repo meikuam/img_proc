@@ -88,6 +88,17 @@ void MainWindow::on_transforms_Clicked() {
     on_windowLayers_Clicked();
 }
 
+
+void MainWindow::on_search_Clicked() {
+    sw = new SearchWindow(getCurrentLayer());
+    connect(sw, SIGNAL(setImgData(ImgData*)),
+            this, SLOT(addLayer(ImgData*)));
+    sw->setAttribute(Qt::WA_DeleteOnClose);
+    sw->show();
+    on_windowLayers_Clicked();
+
+}
+
 // ----------------------------------------------------
 // ------------------ layers --------------------------
 void MainWindow::addLayer(QString fileName) {

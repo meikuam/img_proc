@@ -153,6 +153,7 @@
     <addaction name="menu_format"/>
     <addaction name="menu_correction"/>
     <addaction name="action_transforms"/>
+    <addaction name="action_search"/>
    </widget>
    <widget class="QMenu" name="menu_window">
     <property name="title">
@@ -349,6 +350,11 @@
   <action name="action_transforms">
    <property name="text">
     <string>Преобразования</string>
+   </property>
+  </action>
+  <action name="action_search">
+   <property name="text">
+    <string>Поиск по примитиву</string>
    </property>
   </action>
  </widget>
@@ -687,6 +693,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_search</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_search_Clicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>resizeEvent(QResizeEvent*)</signal>
@@ -701,5 +723,6 @@
   <slot>on_windowChannels_Clicked()</slot>
   <slot>on_windowLayers_Clicked()</slot>
   <slot>on_transforms_Clicked()</slot>
+  <slot>on_search_Clicked()</slot>
  </slots>
 </ui>

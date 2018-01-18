@@ -24,6 +24,8 @@ set(SOURCES
     brightnesswindow.cpp
     filterwindow.cpp
     transformswindow.cpp
+    searchwindow.cpp
+    search.cpp
     imgdata.cpp
     converter.cpp
     filter.cpp
@@ -36,6 +38,8 @@ set(HEADERS
     brightnesswindow.h
     filterwindow.h
     transformswindow.h
+    searchwindow.h
+    search.h
     transforms.h
     imgdata.h
     converter.h
@@ -47,6 +51,7 @@ qt5_wrap_ui(UIS_HDRS
     brightnesswindow.ui
     filterwindow.ui
     transformswindow.ui
+    searchwindow.ui
 )
 
 add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})

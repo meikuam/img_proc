@@ -6,6 +6,7 @@
 #include "brightnesswindow.h"
 #include "filterwindow.h"
 #include "transformswindow.h"
+#include "searchwindow.h"
 #include "imgdata.h"
 
 #include <QtWidgets>
@@ -17,6 +18,7 @@ class MainWindow;
 class BrightnessWindow;
 class FilterWindow;
 class TransformsWindow;
+class SearchWindow;
 class ImageLabel;
 class ImgData;
 }
@@ -62,12 +64,15 @@ private slots:
 
     void on_transforms_Clicked();
 
+    void on_search_Clicked();
+
 private:
 
     Ui::MainWindow      *ui;
     BrightnessWindow    *bw;
     FilterWindow        *fw;
     TransformsWindow    *tw;
+    SearchWindow        *sw;
 
 protected:
 };
