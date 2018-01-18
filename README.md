@@ -1,5 +1,5 @@
 # img_proc
-lab2
+lab3
 
 You can translate from one color space to another:
 
@@ -8,3 +8,7 @@ You can translate from one color space to another:
 Apply some filters like edge detection Canny filter:
 
 ![MainWindow](https://1.downloader.disk.yandex.ru/preview/dea31eb0b80ac43cd09dc85ee192d8f93060f3ebd5ed3d3f900c5ba7a6c7bc7a/inf/vtUgEyRc8ccAmjWRiiI8IhO2T4vyZFRZQuRqj_j8Bo93_zM-GdXnoEnIX3mckt5iLcGTGrJq8CfJp_Tu8Si_hQ%3D%3D?uid=0&filename=lab2.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&size=XXL&crop=0)
+
+Wavelets Haar and Dobeshi
+
+![MainWindow](https://3.downloader.disk.yandex.ru/preview/f489afdf20bc97e15c9d0a925bd96b121ced66919d204ddc2b526fafb5038000/inf/vtUgEyRc8ccAmjWRiiI8Il0hjqh4Xr9YZTgifS2eUcjXj0V4iugTc2kwuKLrAD6gW0z333MqiWgxYGrC-Twefg%3D%3D?uid=0&filename=2018-01-18%2016-24-36%20MainWindow.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&size=XXL&crop=0)
