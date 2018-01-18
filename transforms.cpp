@@ -1,147 +1,85 @@
 #include "transforms.h"
 
+float norm(float min1, float max1, float min2, float max2, float x)
+{
+    float value = (max2 - min2) * (x - min1) / (max1 - min1) + min2;
+    value = value > min2 ? (value > max2 ? max2 : value) : min2;
+    return value;
+}
 
-void Transforms::onedimHaar(double* data, int len) {
-    double* temp = new double[len];
+void Transforms::onedimHaar(float* data, int len) {
+    float* temp = new float[len];
     int h = len / 2;
     for (int i = 0, k = 0; i < h; i++, k = k + 2) {
       temp[i]       = (data[k] + data[k + 1]) / 2;
       temp[i + h]   = (data[k] - data[k + 1]) / 2;
     }
-    memcpy(data, temp, len * sizeof(double));
+    memcpy(data, temp, len * sizeof(float));
     delete temp;
 }
-void Transforms::invOnedimHaar(double* data, int len) {
-    double* temp = new double[len];
+void Transforms::invOnedimHaar(float* data, int len) {
+    float* temp = new float[len];
 
     int h = len / 2;
     for (int i = 0, k = 0; i < h; i++, k = k + 2) {
         temp[k]     = data[i] + data[i + h];
         temp[k + 1] = data[i] - data[i + h];
     }
-    memcpy(data, temp, len * sizeof(double));
+    memcpy(data, temp, len * sizeof(float));
     delete temp;
 }
 
 
-void Transforms::onedimDobeshi(double* data, int len) {
-    double d0 = (1.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d1 = (3.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d2 = (3.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d3 = (1.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
+void Transforms::onedimDobeshi(float* data, int len) {
+    float div = 4.0 * sqrt(2.0);
+    float d0 = (1.0 + sqrt(3.0)) / div;
+    float d1 = (3.0 + sqrt(3.0)) / div;
+    float d2 = (3.0 - sqrt(3.0)) / div;
+    float d3 = (1.0 - sqrt(3.0)) / div;
 
-    double g0 = (1.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g1 = -(3.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g2 = (3.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g3 = -(1.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
+    // 0  1  2  3
+    // 3 -2  1 -0
 
-    double* temp = new double[len];
+    float* temp = new float[len];
     int h = len / 2;
-    for (int i = 0, k = 0; i < h - 1; i++, k = k + 2) {
-        if (k < len - 3)
+    for (int i = 0; i < h; i++) {
+        int k = i * 2;
+        if (i < h - 1)
         {
-            temp[i] = data[k] * d0 + data[k + 1] * d1 + data[k + 2] * d2 + data[k + 3] * d3;
-            temp[i + h] = data[k] * g0 + data[k + 1] * g1 + data[k + 2] * g2 + data[k + 3] * g3;
+            temp[i]     = data[k] * d0 + data[k + 1] * d1 + data[k + 2] * d2 + data[k + 3] * d3;
+            temp[i + h] = data[k] * d3 - data[k + 1] * d2 + data[k + 2] * d1 - data[k + 3] * d0;
+        }
+        else {
+            temp[i]     = data[k] * d0 + data[k + 1] * d1 + data[0] * d2 + data[1] * d3;
+            temp[i + h] = data[k] * d3 - data[k + 1] * d2 + data[0] * d1 - data[1] * d0;
+        }
+        //TODO: last 4 elements1
+    }
+    memcpy(data, temp, len * sizeof(float));
+    delete temp;
+}
+
+void Transforms::invOnedimDobeshi(float* data, int len) {
+    float div = 4.0 * sqrt(2.0);
+    float d0 = (1.0 + sqrt(3.0)) / div;
+    float d1 = (3.0 + sqrt(3.0)) / div;
+    float d2 = (3.0 - sqrt(3.0)) / div;
+    float d3 = (1.0 - sqrt(3.0)) / div;
+    float* temp = new float[len];
+
+    int h = len / 2;
+    for (int i = 0; i < h; i++) {
+        int k = i * 2;
+        if (i < h - 1)
+        {
+            temp[k+2]     = data[i] * d2 + data[i + h] * d1  + data[i + 1] * d0 + data[i + h + 1] * d3;
+            temp[k + 1+2] = data[i] * d3 - data[i + h] * d0 + data[i + 1] * d1 - data[i + h + 1] * d2;
         }
         //TODO: last 4 elements
     }
-    memcpy(data, temp, len * sizeof(double));
+    memcpy(data, temp, len * sizeof(float));
     delete temp;
 }
-
-void Transforms::invOnedimDobeshi(double* data, int len) {
-    double d0 = (1.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d1 = (3.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d2 = (3.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double d3 = (1.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-
-    double g0 = (1.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g1 = -(3.0 - sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g2 = (3.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double g3 = -(1.0 + sqrt(3.0)) / (4.0 * sqrt(2.0));
-    double id0 = d2;
-    double id1 = d1;
-    double id2 = d0;
-    double id3 = d3;
-
-    double* temp = new double[len];
-
-    int h = len / 2;
-    for (int i = 0, k = 0; i < h - 1; i++, k = k + 2) {
-        if (k < len - 3)
-        {
-            temp[k] = data[i] * id0 + data[i + h] * id1 + data[i + 1] * id2 + data[i + h + 1] * id3;
-            temp[k + 1] = data[i] * g0 + data[i + h] * g1 + data[i + 1] * g2 + data[i + h + 1] * g3;
-        }
-        //TODO: last 4 elements
-    }
-    memcpy(data, temp, len * sizeof(double));
-    delete temp;
-}
-
-//void Haar(Data2d<double>* data, int iterations, Direction direct) {
-//    double* row = new double[data->width()];
-//    double* col = new double[data->height()];
-
-//    for(int c = 0; c < data->depth(); c++) {
-//        switch (direct) {
-//        case Forward:
-//        {
-//            for (int k = 1; k <= iterations; k = k * 2) {
-//                int h = data->height() / k;
-//                int w = data->width() / k;
-//                for (int y = 0; y < h; y++) {
-//                    for (int x = 0; x < w; x++)
-//                        row[x] = *(*data)(x, y, c);
-
-//                    onedimHaar(row, w);
-
-//                    for (int x = 0; x < w; x++)
-//                        *(*data)(x, y, c) = row[x];
-//                }
-
-//                for (int x = 0; x < w; x++) {
-//                    for (int y = 0; y < h; y++)
-//                        col[y] = *(*data)(x, y, c);
-
-//                    onedimHaar(col, h);
-//                    for (int y = 0; y < h; y++)
-//                        *(*data)(x, y, c) = col[y];
-//                }
-//            }
-//            break;
-//        }
-//        case Backward:
-//        {
-
-//            for (int k = iterations; k >= 1 ; k = k / 2) {
-//                int h = data->height() / k;
-//                int w = data->width() / k;
-//                for (int x = 0; x < w; x++) {
-//                    for (int y = 0; y < h; y++)
-//                        col[y] = *(*data)(x, y, c);
-//                    invOnedimHaar(col, h);
-//                    for (int y = 0; y < h; y++)
-//                        *(*data)(x, y, c) = col[y];
-//                }
-//                for (int y = 0; y < h; y++) {
-//                    for (int x = 0; x < w; x++)
-//                        row[x] = *(*data)(x, y, c);
-//                    invOnedimHaar(row, w);
-//                    for (int x = 0; x < w; x++)
-//                        *(*data)(x, y, c) = row[x];
-//                }
-//            }
-//            break;
-//        }
-//        }
-//    }
-//    delete row;
-//    delete col;
-//}
-
-
-
 
 void Transforms::transform(ImgData* src,
                       ImgData* dst,
@@ -149,16 +87,16 @@ void Transforms::transform(ImgData* src,
                       Direction direct,
                       int iterations) {
 
-    Data2d<double>* data = new Data2d<double>(src->width(), src->height(), src->depth());
+    Data2d<float>* data = new Data2d<float>(src->width(), src->height(), src->depth());
     for(int x = 0; x < data->width(); x++) {
         for(int y = 0; y < data->height(); y++) {
             for(int c = 0; c < data->depth(); c++) {
-                *(*data)(x, y, c) = *(*src)(x, y, c);
+                *(*data)(x, y, c) = norm(0, 255, -1, 1, *(*src)(x, y, c));
             }
         }
     }
-    double* row = new double[data->width()];
-    double* col = new double[data->height()];
+    float* row = new float[data->width()];
+    float* col = new float[data->height()];
 
     for(int c = 0; c < data->depth(); c++) {
         switch (direct) {
@@ -246,7 +184,7 @@ void Transforms::transform(ImgData* src,
     for(int x = 0; x < data->width(); x++) {
         for(int y = 0; y < data->height(); y++) {
             for(int c = 0; c < data->depth(); c++) {
-                *(*dst)(x, y, c) = *(*data)(x, y, c);
+                *(*dst)(x, y, c) = norm(-1, 1, 0, 255, *(*data)(x, y, c));
             }
         }
     }

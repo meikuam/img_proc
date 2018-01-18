@@ -19,12 +19,10 @@ enum Direction {
 };
 
 class Transforms {
-    static void onedimHaar(double* data, int len);
-    static void invOnedimHaar(double* data, int len);
-    static void onedimDobeshi(double* data, int len);
-    static void invOnedimDobeshi(double* data, int len);
-    static void Haar(Data2d<double>* data, int iterations, Direction direct);
-    static void Dobeshi(Data2d<double>* data, int iterations, Direction direct);
+    static void onedimHaar(float* data, int len);
+    static void invOnedimHaar(float* data, int len);
+    static void onedimDobeshi(float* data, int len);
+    static void invOnedimDobeshi(float* data, int len);
 
 public:
     static void transform(ImgData* src,
