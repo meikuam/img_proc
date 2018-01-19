@@ -12,3 +12,8 @@ Apply some filters like edge detection Canny filter:
 Wavelets Haar and Dobeshi
 
 ![MainWindow](https://3.downloader.disk.yandex.ru/preview/f489afdf20bc97e15c9d0a925bd96b121ced66919d204ddc2b526fafb5038000/inf/vtUgEyRc8ccAmjWRiiI8Il0hjqh4Xr9YZTgifS2eUcjXj0V4iugTc2kwuKLrAD6gW0z333MqiWgxYGrC-Twefg%3D%3D?uid=0&filename=2018-01-18%2016-24-36%20MainWindow.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&size=XXL&crop=0)
+
+Morphological operations
+and hit-or-miss search
+
+![MainWindow](https://4.downloader.disk.yandex.ru/preview/99a67705c7c09d5e538b83069bfc8449f7ea30e6a91ee95d504fcd562ac6a649/inf/vtUgEyRc8ccAmjWRiiI8IqOtF4YJpdHrGMHb0qE2AogQP0Aer8vVzEWwTiyTPt7v-fbBAvoQKrpaovCVAtwT8w%3D%3D?uid=0&filename=2018-01-19%2009-04-32%20MainWindow.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&size=XXL&crop=0)
