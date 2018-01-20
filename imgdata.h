@@ -29,6 +29,7 @@ class ImgData{
     }
 
 public:
+    float min = 0.f, max = 255.f;
     ImgData();
     // create from path
     ImgData(QString path);

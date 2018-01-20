@@ -1,10 +1,13 @@
 #include "transforms.h"
+#include "float.h"
 
-float norm(float min1, float max1, float min2, float max2, float x)
+float norm(float from_min, float from_max, float to_min, float to_max, float x)
 {
-    float value = (max2 - min2) * (x - min1) / (max1 - min1) + min2;
-    value = value > min2 ? (value > max2 ? max2 : value) : min2;
-    return value;
+    if(from_max - from_min == 0) return 0.f;
+    float val = (to_max - to_min) * (x - from_min) / (from_max - from_min) + to_min;
+    if(val > to_max) val = to_max;
+    if(val < to_min) val = to_min;
+    return val;
 }
 
 void Transforms::onedimHaar(float* data, int len) {
@@ -42,10 +45,10 @@ void Transforms::onedimDobeshi(float* data, int len) {
 
     float* temp = new float[len];
     int h = len / 2;
+
     for (int i = 0; i < h; i++) {
         int k = i * 2;
-        if (i < h - 1)
-        {
+        if (i < h - 1) {
             temp[i]     = data[k] * d0 + data[k + 1] * d1 + data[k + 2] * d2 + data[k + 3] * d3;
             temp[i + h] = data[k] * d3 - data[k + 1] * d2 + data[k + 2] * d1 - data[k + 3] * d0;
         }
@@ -53,7 +56,6 @@ void Transforms::onedimDobeshi(float* data, int len) {
             temp[i]     = data[k] * d0 + data[k + 1] * d1 + data[0] * d2 + data[1] * d3;
             temp[i + h] = data[k] * d3 - data[k + 1] * d2 + data[0] * d1 - data[1] * d0;
         }
-        //TODO: last 4 elements1
     }
     memcpy(data, temp, len * sizeof(float));
     delete temp;
@@ -68,14 +70,17 @@ void Transforms::invOnedimDobeshi(float* data, int len) {
     float* temp = new float[len];
 
     int h = len / 2;
-    for (int i = 0; i < h; i++) {
-        int k = i * 2;
+    for (int i = 0; i < h - 1; i++) {
+        int k = i * 2 + 2;
+        if(i == 0) {
+            temp[0]         = data[0] * d2 + data[h * 2 - 2] * d1  + data[1] * d0 + data[h * 2 - 1] * d3;
+            temp[1]         = data[0] * d3 - data[h * 2 - 2] * d0 + data[1] * d1 - data[h * 2 - 1] * d2;
+        }
         if (i < h - 1)
         {
-            temp[k+2]     = data[i] * d2 + data[i + h] * d1  + data[i + 1] * d0 + data[i + h + 1] * d3;
-            temp[k + 1+2] = data[i] * d3 - data[i + h] * d0 + data[i + 1] * d1 - data[i + h + 1] * d2;
+            temp[k]         = data[i] * d2 + data[i + h] * d1  + data[i + 1] * d0 + data[i + h + 1] * d3;
+            temp[k + 1]     = data[i] * d3 - data[i + h] * d0 + data[i + 1] * d1 - data[i + h + 1] * d2;
         }
-        //TODO: last 4 elements
     }
     memcpy(data, temp, len * sizeof(float));
     delete temp;
@@ -87,11 +92,12 @@ void Transforms::transform(ImgData* src,
                       Direction direct,
                       int iterations) {
 
+    cout<<"src->min: "<<src->min<<" src->max: "<<src->max<<endl;
     Data2d<float>* data = new Data2d<float>(src->width(), src->height(), src->depth());
     for(int x = 0; x < data->width(); x++) {
         for(int y = 0; y < data->height(); y++) {
             for(int c = 0; c < data->depth(); c++) {
-                *(*data)(x, y, c) = norm(0, 255, -1, 1, *(*src)(x, y, c));
+                *(*data)(x, y, c) = norm(0.f, 255.f, src->min, src->max, *(*src)(x, y, c));
             }
         }
     }
@@ -181,10 +187,27 @@ void Transforms::transform(ImgData* src,
     }
     delete row;
     delete col;
+
+    float min = FLT_MAX,
+          max = FLT_MIN;
     for(int x = 0; x < data->width(); x++) {
         for(int y = 0; y < data->height(); y++) {
             for(int c = 0; c < data->depth(); c++) {
-                *(*dst)(x, y, c) = norm(-1, 1, 0, 255, *(*data)(x, y, c));
+                if(*(*data)(x, y, c) > max)
+                    max = *(*data)(x, y, c);
+                if(*(*data)(x, y, c) < min)
+                    min = *(*data)(x, y, c);
+            }
+        }
+    }
+    dst->min = min;
+    dst->max = max;
+
+    cout<<"dst->min: "<<dst->min<<" dst->max: "<<dst->max<<endl;
+    for(int x = 0; x < data->width(); x++) {
+        for(int y = 0; y < data->height(); y++) {
+            for(int c = 0; c < data->depth(); c++) {
+                *(*dst)(x, y, c) = norm(min, max, 0.f, 255.f, *(*data)(x, y, c));
             }
         }
     }
@@ -193,12 +216,14 @@ void Transforms::transform(ImgData* src,
         switch (direct) {
         case Forward:
         {
-            dst->setName("Haar forward");
+            dst->setName(src->getName() + " Haar forward for " + QString::number(iterations) + " iterations");
             break;
         }
         case Backward:
         {
-            dst->setName("Haar backward");
+            dst->min = 0.f;
+            dst->max = 255.f;
+            dst->setName(src->getName() + " Haar backward for " + QString::number(iterations) + " iterations");
             break;
         }
         }
@@ -207,14 +232,15 @@ void Transforms::transform(ImgData* src,
         switch (direct) {
         case Forward:
         {
-            cout<<"Dobeshi forward"<<endl;
-            dst->setName("Dobeshi forward");
+            dst->setName(src->getName() + " Dobeshi forward for " + QString::number(iterations) + " iterations");
             break;
         }
         case Backward:
         {
-            cout<<"Dobeshi backward"<<endl;
-            dst->setName("Dobeshi backward");
+
+            dst->min = 0.f;
+            dst->max = 255.f;
+            dst->setName(src->getName() + " Dobeshi backward for " + QString::number(iterations) + " iterations");
             break;
         }
         }
