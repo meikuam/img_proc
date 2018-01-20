@@ -27,38 +27,53 @@ SearchWindow::~SearchWindow()
 
 void SearchWindow::on_applyButton_clicked()
 {
-//    ImgData* output = new ImgData(*input);
+    qRegisterMetaType<ImgData*>("ImgData*");
+    QSignalSpy spy(this, SIGNAL(setImgData(ImgData*)));
+
     switch (method_) {
     case HitOrMiss:
     {
+
 //        A*B = (A erosion B) intersection (Ac erosion (W substract B))
 
         ImgData* A = new ImgData(*input);
         Filter::filter(input, A, Binary);               // bin A
         setImgData(A);
+        bool check = spy.wait(1);
+        cout<<"A "<<check<<endl;
 
         on_getMaskButton_clicked();
         ImgData* AeB = new ImgData(*A);
         ImgData* B = new ImgData(*mask);
-
         Filter::morphFilter(A, AeB, B, Erosion);     // (A erosion B)
         setImgData(AeB);
+        check = spy.wait(1);
+        cout<<"AeB "<<check<<endl;
 
         ImgData* Ac = new ImgData(*A);
         Filter::filter(A, Ac, Inversion);               // Ac
         setImgData(Ac);
+        check = spy.wait(1);
+        cout<<"Ac "<<check<<endl;
 
         ImgData* WB = new ImgData(*B);
         Filter::filter(B, WB, Inversion);            // (W substract B)
         setImgData(WB);
+        check =spy.wait(1);
+        cout<<"WB "<<check<<endl;
 
         ImgData* AcWB = new ImgData(*Ac);
         Filter::morphFilter(Ac, AcWB, WB, Erosion);    // (Ac erosion (W substract B))
         setImgData(AcWB);
+        check =spy.wait(1);
+        cout<<"AcWB "<<check<<endl;
 
         ImgData* res = new ImgData(*A);
         Filter::morphFilter(AeB, res, AcWB, Intersection);     // A*B = (A erosion B) intersection (Ac erosion (W substract B))
         setImgData(res);
+        check =spy.wait(1);
+        cout<<"res "<<check<<endl;
+
         break;
     }
     case Inversion:
@@ -67,6 +82,8 @@ void SearchWindow::on_applyButton_clicked()
         ImgData* bin = new ImgData(*input);
         Filter::filter(input, bin, method_);
         setImgData(bin);
+        bool check = spy.wait(1);
+        cout<<"bin "<<check<<endl;
         input = bin;
         break;
     }
@@ -79,10 +96,15 @@ void SearchWindow::on_applyButton_clicked()
         ImgData* bin = new ImgData(*input);
         Filter::filter(input, bin, Binary);
         setImgData(bin);
+        bool check = spy.wait(1);
+        cout<<"bin "<<check<<endl;
         ImgData* res = new ImgData(*bin);
         on_getMaskButton_clicked();
         Filter::morphFilter(input, res, mask, method_);
         setImgData(res);
+
+        check = spy.wait(1);
+        cout<<"res "<<check<<endl;
         input = res;
         break;
     }
@@ -96,15 +118,22 @@ void SearchWindow::on_cancelButton_clicked()
 
 void SearchWindow::on_getMaskButton_clicked()
 {
+    qRegisterMetaType<ImgData*>("ImgData*");
+    QSignalSpy spy(this, SIGNAL(setImgData(ImgData*)));
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение маску"),
                                                     "/", "Image Files (*.png *.jpg *.jpeg *.bmp)");
     mask = new ImgData(fileName);
     setImgData(mask);
 
+    bool check = spy.wait(1);
+    cout<<"mask "<<check<<endl;
     ImgData* bin = new ImgData(*mask);
     Filter::filter(mask, bin, Binary);
     setImgData(bin);
+
+    check = spy.wait(1);
+    cout<<"bin "<<check<<endl;
     mask = bin;
 }
 
@@ -136,4 +165,9 @@ void SearchWindow::on_comboBox_currentIndexChanged(int index)
         method_ = Intersection;
         break;
     }
+}
+
+
+void SearchWindow::gotReady() {
+    ready = true;
 }

@@ -4,6 +4,8 @@
 #include <QMainWindow>
 #include <QLabel>
 #include <QFileDialog>
+#include <QSignalSpy>
+#include <QTest>
 
 #include "imgdata.h"
 #include "search.h"
@@ -19,6 +21,7 @@ class SearchWindow : public QMainWindow
     Q_OBJECT
 
     Method method_;
+    bool ready = true;
 public:
     explicit SearchWindow(ImgData *inp, QWidget *parent = 0 );
     ~SearchWindow();
@@ -28,6 +31,9 @@ public:
 
     Q_SIGNAL
     void setImgData(ImgData* out);
+
+    Q_SLOT
+    void gotReady();
 
 private slots:
     void on_applyButton_clicked();

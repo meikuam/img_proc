@@ -98,7 +98,7 @@ void MainWindow::on_transforms_Clicked() {
 
 
 void MainWindow::on_search_Clicked() {
-    sw = new SearchWindow(getCurrentLayer());
+    sw = new SearchWindow(getCurrentLayer(), this);
     connect(sw, SIGNAL(setImgData(ImgData*)),
             this, SLOT(addLayer(ImgData*)));
     sw->setAttribute(Qt::WA_DeleteOnClose);
@@ -143,6 +143,7 @@ void MainWindow::addLayer(ImgData* img) {
     } else {
         data.pop_back();
     }
+    ready();
 }
 
 ImgData*  MainWindow::getCurrentLayer() {

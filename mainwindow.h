@@ -33,6 +33,9 @@ public:
     QLabel              *debugLabel;
     vector<ImgData*>    data;
 
+    Q_SIGNAL
+    void ready();
+
 private slots:
     void on_openFile_Clicked();
     void on_saveFile_Clicked();
@@ -65,6 +68,7 @@ private slots:
     void on_transforms_Clicked();
 
     void on_search_Clicked();
+
 
 private:
 

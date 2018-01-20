@@ -15,6 +15,7 @@ include_directories(
 find_package(Qt5Core REQUIRED)
 find_package(Qt5Gui REQUIRED)
 find_package(Qt5Widgets REQUIRED)
+find_package(Qt5Test REQUIRED)
 
 set(SOURCES
     main.cpp
@@ -55,4 +56,4 @@ qt5_wrap_ui(UIS_HDRS
 )
 
 add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})
-target_link_libraries(${project_name} Qt5::Core Qt5::Gui Qt5::Widgets)
+target_link_libraries(${project_name} Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Test)
