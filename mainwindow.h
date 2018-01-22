@@ -6,7 +6,7 @@
 #include "brightnesswindow.h"
 #include "filterwindow.h"
 #include "transformswindow.h"
-#include "searchwindow.h"
+#include "morphwindow.h"
 #include "imgdata.h"
 
 #include <QtWidgets>
@@ -18,7 +18,7 @@ class MainWindow;
 class BrightnessWindow;
 class FilterWindow;
 class TransformsWindow;
-class SearchWindow;
+class MorphWindow;
 class ImageLabel;
 class ImgData;
 }
@@ -37,22 +37,22 @@ public:
     void ready();
 
 private slots:
-    void on_openFile_Clicked();
-    void on_saveFile_Clicked();
-    void on_saveFileAs_Clicked();
+    void on_openFileAct_triggered();
+    void on_saveFileAct_triggered();
+    void on_saveFileAsAct_triggered();
 
-    void on_RGB_Checked();
-    void on_YCbCr_Checked();
-    void on_HSV_Checked();
-    void on_Brightness_Clicked();
-    void on_Filters_Clicked();
+    void on_actionRGB_triggered();
+    void on_actionYCbCr_triggered();
+    void on_actionHSV_triggered();
+    void on_action_Brightness_triggered();
+    void on_action_Filters_triggered();
 
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent *event);
 
     void setMenuEnabled(bool);
-    void on_windowChannels_Clicked();
-    void on_windowLayers_Clicked();
+    void on_action_channels_triggered();
+    void on_action_layers_triggered();
 
     void setUIFormat(Format format);
 
@@ -65,9 +65,8 @@ private slots:
 
     void on_channelsWidget_itemClicked(QListWidgetItem *item);
 
-    void on_transforms_Clicked();
-
-    void on_search_Clicked();
+    void on_action_transforms_triggered();
+    void on_action_morph_triggered();
 
 
 private:
@@ -76,7 +75,7 @@ private:
     BrightnessWindow    *bw;
     FilterWindow        *fw;
     TransformsWindow    *tw;
-    SearchWindow        *sw;
+    MorphWindow         *mw;
 
 protected:
 };

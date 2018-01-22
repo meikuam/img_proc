@@ -44,19 +44,19 @@ void MainWindow::dropEvent(QDropEvent *event)
     }
 }
 
-void MainWindow::on_openFile_Clicked() {
+void MainWindow::on_openFileAct_triggered() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение"),
                                                     "/", "Image Files (*.png *.jpg *.jpeg *.bmp)");
     addLayer(fileName);
 }
 
-void MainWindow::on_saveFile_Clicked() {
+void MainWindow::on_saveFileAct_triggered() {
     debugLabel->setText("saveFile");
     ImgData* buf = getCurrentLayer();
     buf->img()->save(buf->getPath());
 }
 
-void MainWindow::on_saveFileAs_Clicked() {
+void MainWindow::on_saveFileAsAct_triggered() {
     debugLabel->setText("saveFileAs");
     ImgData* buf = getCurrentLayer();
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"),
@@ -65,8 +65,7 @@ void MainWindow::on_saveFileAs_Clicked() {
 //    QString path = QFileDialog::getSaveFileUrl(this, tr("Сохранить как.."), "/");//, "Image Files (*.png *.jpg *.jpeg *.bmp)");
     buf->img()->save(fileName);
 }
-
-void MainWindow::on_Brightness_Clicked() {
+void MainWindow::on_action_Brightness_triggered() {
 
     bw = new BrightnessWindow(getCurrentLayer(), ui->channelsWidget);
     connect(bw, SIGNAL(repaint()),
@@ -76,34 +75,34 @@ void MainWindow::on_Brightness_Clicked() {
 
     bw->setAttribute(Qt::WA_DeleteOnClose);
     bw->show();
-    on_windowChannels_Clicked();
+    on_action_channels_triggered();
 }
 
-void MainWindow::on_Filters_Clicked() {
+void MainWindow::on_action_Filters_triggered() {
     fw = new FilterWindow(getCurrentLayer());
     connect(fw, SIGNAL(setImgData(ImgData*)),
             this, SLOT(addLayer(ImgData*)));
     fw->setAttribute(Qt::WA_DeleteOnClose);
     fw->show();
-    on_windowLayers_Clicked();
+    on_action_layers_triggered();
 }
-void MainWindow::on_transforms_Clicked() {
+void MainWindow::on_action_transforms_triggered() {
     tw = new TransformsWindow(getCurrentLayer());
     connect(tw, SIGNAL(setImgData(ImgData*)),
             this, SLOT(addLayer(ImgData*)));
     tw->setAttribute(Qt::WA_DeleteOnClose);
     tw->show();
-    on_windowLayers_Clicked();
+    on_action_layers_triggered();
 }
 
 
-void MainWindow::on_search_Clicked() {
-    sw = new SearchWindow(getCurrentLayer(), this);
-    connect(sw, SIGNAL(setImgData(ImgData*)),
+void MainWindow::on_action_morph_triggered() {
+    mw = new MorphWindow(getCurrentLayer(), this);
+    connect(mw, SIGNAL(setImgData(ImgData*)),
             this, SLOT(addLayer(ImgData*)));
-    sw->setAttribute(Qt::WA_DeleteOnClose);
-    sw->show();
-    on_windowLayers_Clicked();
+    mw->setAttribute(Qt::WA_DeleteOnClose);
+    mw->show();
+    on_action_layers_triggered();
 }
 
 // ----------------------------------------------------
@@ -199,19 +198,19 @@ void MainWindow::on_deleteLayerButton_clicked() {
 
 // ----------------------------------------------------
 // ------------------ channels ------------------------
-void MainWindow::on_RGB_Checked() {
+void MainWindow::on_actionRGB_triggered() {
     getCurrentLayer()->convertTo(Format_RGB);
     ui->imageLabel->repaint();
     setUIFormat(Format_RGB);
 }
 
-void MainWindow::on_YCbCr_Checked() {
+void MainWindow::on_actionYCbCr_triggered() {
     getCurrentLayer()->convertTo(Format_YCbCr);
     ui->imageLabel->repaint();
     setUIFormat(Format_YCbCr);
 }
 
-void MainWindow::on_HSV_Checked() {
+void MainWindow::on_actionHSV_triggered() {
     getCurrentLayer()->convertTo(Format_HSV);
     ui->imageLabel->repaint();
     setUIFormat(Format_HSV);
@@ -326,7 +325,7 @@ void MainWindow::on_channelsWidget_itemClicked(QListWidgetItem *item)
 
 // ----------------------------------------------------
 // -------------------- UI ----------------------------
-void MainWindow::on_windowChannels_Clicked() {
+void MainWindow::on_action_channels_triggered() {
     if(ui->action_channels->isChecked()) {
         ui->action_channels->setChecked(false);
         ui->toolBox->setCurrentIndex(1);
@@ -337,7 +336,7 @@ void MainWindow::on_windowChannels_Clicked() {
     }
 }
 
-void MainWindow::on_windowLayers_Clicked() {
+void MainWindow::on_action_layers_triggered() {
     if(ui->action_channels->isChecked()) {
         ui->action_channels->setChecked(false);
         ui->toolBox->setCurrentIndex(0);
@@ -357,7 +356,7 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->menu_format->setEnabled(sw);
     ui->menu_correction->setEnabled(sw);
     ui->action_transforms->setEnabled(sw);
-    ui->action_search->setEnabled(sw);
+    ui->action_morph->setEnabled(sw);
     //ui->menu_window // Окно
     ui->action_channels->setEnabled(sw);
     ui->action_layers->setEnabled(sw);

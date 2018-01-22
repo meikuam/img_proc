@@ -20,6 +20,7 @@ enum Method {
     Gauss,          //7
     Gray,           //8
 
+    //morphological operations are implemented in morph.h/cpp
     Erosion,
     Dilation,
     Subtraction,
@@ -64,10 +65,6 @@ public:
     static void filter(ImgData* src,
                        ImgData* dst,
                        Method method);
-    static void morphFilter(ImgData *src,
-                             ImgData *dst,
-                             ImgData *mask,
-                             Method method);
 };
 
 #endif // FILTER_H

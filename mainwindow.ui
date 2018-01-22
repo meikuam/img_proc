@@ -119,7 +119,7 @@
      <x>0</x>
      <y>0</y>
      <width>807</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_file">
@@ -153,7 +153,7 @@
     <addaction name="menu_format"/>
     <addaction name="menu_correction"/>
     <addaction name="action_transforms"/>
-    <addaction name="action_search"/>
+    <addaction name="action_morph"/>
    </widget>
    <widget class="QMenu" name="menu_window">
     <property name="title">
@@ -229,7 +229,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>393</height>
+          <height>380</height>
          </rect>
         </property>
         <attribute name="label">
@@ -247,7 +247,7 @@
           <x>0</x>
           <y>0</y>
           <width>200</width>
-          <height>393</height>
+          <height>380</height>
          </rect>
         </property>
         <attribute name="label">
@@ -270,6 +270,17 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
   </widget>
   <action name="action_2">
    <property name="text">
@@ -352,7 +363,7 @@
     <string>Преобразования</string>
    </property>
   </action>
-  <action name="action_search">
+  <action name="action_morph">
    <property name="text">
     <string>Морфологические штуки</string>
    </property>
@@ -393,7 +404,7 @@
    <sender>openFileAct</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_openFile_Clicked()</slot>
+   <slot>on_openFileAct_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -409,7 +420,7 @@
    <sender>saveFileAct</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_saveFile_Clicked()</slot>
+   <slot>on_saveFileAct_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -425,7 +436,7 @@
    <sender>saveFileAsAct</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_saveFileAs_Clicked()</slot>
+   <slot>on_saveFileAsAct_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -441,7 +452,7 @@
    <sender>actionRGB</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_RGB_Checked()</slot>
+   <slot>on_actionRGB_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -457,7 +468,7 @@
    <sender>actionHSV</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_HSV_Checked()</slot>
+   <slot>on_actionHSV_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -473,7 +484,7 @@
    <sender>actionYCbCr</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_YCbCr_Checked()</slot>
+   <slot>on_actionHSV_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -617,7 +628,7 @@
    <sender>action_Brightness</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_Brightness_Clicked()</slot>
+   <slot>on_action_Brightness_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -633,7 +644,7 @@
    <sender>action_Filters</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_Filters_Clicked()</slot>
+   <slot>on_action_Filters_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -649,7 +660,7 @@
    <sender>action_layers</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_windowLayers_Clicked()</slot>
+   <slot>on_action_layers_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -665,7 +676,7 @@
    <sender>action_channels</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_windowChannels_Clicked()</slot>
+   <slot>on_action_channels_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -681,7 +692,7 @@
    <sender>action_transforms</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_transforms_Clicked()</slot>
+   <slot>on_action_transforms_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -694,10 +705,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_search</sender>
+   <sender>action_morph</sender>
    <signal>triggered()</signal>
    <receiver>MainWindow</receiver>
-   <slot>on_search_Clicked()</slot>
+   <slot>on_action_morph_triggered()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -712,17 +723,17 @@
  </connections>
  <slots>
   <signal>resizeEvent(QResizeEvent*)</signal>
-  <slot>on_openFile_Clicked()</slot>
-  <slot>on_saveFile_Clicked()</slot>
-  <slot>on_saveFileAs_Clicked()</slot>
-  <slot>on_YCbCr_Checked()</slot>
-  <slot>on_HSV_Checked()</slot>
-  <slot>on_RGB_Checked()</slot>
-  <slot>on_Brightness_Clicked()</slot>
-  <slot>on_Filters_Clicked()</slot>
-  <slot>on_windowChannels_Clicked()</slot>
-  <slot>on_windowLayers_Clicked()</slot>
-  <slot>on_transforms_Clicked()</slot>
-  <slot>on_search_Clicked()</slot>
+  <slot>on_openFileAct_triggered()</slot>
+  <slot>on_saveFileAct_triggered()</slot>
+  <slot>on_saveFileAsAct_triggered()</slot>
+  <slot>on_actionYCbCr_triggered()</slot>
+  <slot>on_actionHSV_triggered()</slot>
+  <slot>on_actionRGB_triggered()</slot>
+  <slot>on_action_Brightness_triggered()</slot>
+  <slot>on_action_Filters_triggered()</slot>
+  <slot>on_action_channels_triggered()</slot>
+  <slot>on_action_layers_triggered()</slot>
+  <slot>on_action_transforms_triggered()</slot>
+  <slot>on_action_morph_triggered()</slot>
  </slots>
 </ui>

@@ -1,5 +1,5 @@
-#ifndef SEARCHWINDOW_H
-#define SEARCHWINDOW_H
+#ifndef MORPHWINDOW_H
+#define MORPHWINDOW_H
 
 #include <QMainWindow>
 #include <QLabel>
@@ -10,21 +10,22 @@
 #include "imgdata.h"
 #include "search.h"
 #include "filter.h"
+#include "morph.h"
 
 
 namespace Ui {
-class SearchWindow;
+class MorphWindow;
 }
 
-class SearchWindow : public QMainWindow
+class MorphWindow : public QMainWindow
 {
     Q_OBJECT
 
     Method method_;
     bool ready = true;
 public:
-    explicit SearchWindow(ImgData *inp, QWidget *parent = 0 );
-    ~SearchWindow();
+    explicit MorphWindow(ImgData *inp, QWidget *parent = 0 );
+    ~MorphWindow();
     ImgData *input,
             *mask,
             *output;
@@ -44,7 +45,7 @@ private slots:
     void on_comboBox_currentIndexChanged(int index);
 
 private:
-    Ui::SearchWindow    *ui;
+    Ui::MorphWindow    *ui;
 };
 
-#endif // SEARCHWINDOW_H
+#endif // MORPHWINDOW_H

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SearchWindow</class>
- <widget class="QMainWindow" name="SearchWindow">
+ <class>MorphWindow</class>
+ <widget class="QMainWindow" name="MorphWindow">
   <property name="enabled">
    <bool>true</bool>
   </property>
@@ -53,7 +53,7 @@
       <item>
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Поиск примитива преобразованием &quot;успех/неудача&quot;</string>
+         <string>Морфологические операции</string>
         </property>
        </widget>
       </item>
@@ -83,25 +83,6 @@
          </size>
         </property>
        </spacer>
-      </item>
-      <item>
-       <widget class="QPushButton" name="getMaskButton">
-        <property name="minimumSize">
-         <size>
-          <width>120</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>120</width>
-          <height>30</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Выбрать примитив</string>
-        </property>
-       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="cancelButton">
