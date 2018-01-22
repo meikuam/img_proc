@@ -43,7 +43,7 @@ void MainWindow::dropEvent(QDropEvent *event)
         event->acceptProposedAction();
     }
 }
-
+//"Image files (*.BMP, *.JPG, *.GIF, *.TIF, *.PNG, *.ICO, *.EMF, *.WMF)|*.bmp;*.jpg;*.gif; *.tif; *.png; *.ico; *.emf; *.wmf"
 void MainWindow::on_openFileAct_triggered() {
     QString fileName = QFileDialog::getOpenFileName(this, tr("Открыть изображение"),
                                                     "/", "Image Files (*.png *.jpg *.jpeg *.bmp)");

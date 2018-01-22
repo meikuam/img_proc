@@ -1,22 +1,22 @@
 #include "segmentation.h"
 
 
-float  Segmentation::mean(/*Data2d<uint8_t>* img, */float* h) {
+float  Segmentation::mean(Data2d<uint8_t>* img/*, float* h*/) {
     float m = 0.f;
-    int L = 256;
-//    for(int x = 0; x < img->width(); x++) {
-//        for(int y = 0; y < img->height(); y++) {
-//            m += *(*img)(x, y, 0) ;
-//        }
-//    }
-//    m /= img->width() * img->height();
-    for(int i = 0; i < L; i++) {
-        m += i * h[i];
+//    int L = 256;
+    for(int x = 0; x < img->width(); x++) {
+        for(int y = 0; y < img->height(); y++) {
+            m += *(*img)(x, y, 0);
+        }
     }
+    m /= img->width() * img->height();
+//    for(int i = 0; i < L; i++) {
+//        m += i * h[i];
+//    }
     return m;
 }
 
-void Segmentation::hist(Data2d<uint8_t> *img, float *h) {
+void Segmentation::hist(Data2d<uint8_t> *img, float* h) {
     float n = img->width() * img->height();
     int L = 256;
     for(int i = 0; i < L; i++) {
@@ -39,12 +39,17 @@ float Segmentation::moment(float* h, float mean, int n) {
     if(n == 0) return 1.f;
     if(n == 1) return 0.f;
     float moment = 0.f;
+    float value = 0.f;
     int L = 256;
 
     for(int i = 0; i < L; i++) {
-        moment += pow(i - mean, n) * h[i];
+        value = i - mean;
+        for(int k = 1; k < n; k++) {
+            value *= i - mean;
+        }
+        moment += value * h[i];
     }
-
+    return moment;
 }
 
 
@@ -54,37 +59,41 @@ float Segmentation::R(float variance) {
 
 void Segmentation::subset(ImgData* src, Data2d<uint8_t>* sub, int center_x, int center_y) {
 
-
-    int corner_x0 = 0,
-        corner_y0 = 0;
+    for(int x = 0; x < sub->width(); x++) {
+        for(int y = 0; y < sub->height(); y++) {
+            *(*sub)(x, y, 0) = 0;
+        }
+    }
+    int x0 = 0,
+        y0 = 0;
 
     //left upper corner of subset in src
-    int src_corner_x0 = center_x - sub->width() / 2;
-    int src_corner_y0 = center_y - sub->height() / 2;
+    int src_x0 = center_x - sub->width() / 2;
+    int src_y0 = center_y - sub->height() / 2;
 
     //right down corner of subset in src
-    int src_corner_x1 = center_x + sub->width() / 2;
-    int src_corner_y1 = center_y + sub->height() / 2;
+    int src_x1 = src_x0 + sub->width();
+    int src_y1 = src_y0 + sub->height();
 
-    if(src_corner_x0 < 0) {
-        corner_x0       = -src_corner_x0;
-        src_corner_x0   = 0;
+    if(src_x0 < 0) {
+        x0       = -src_x0;
+        src_x0   = 0;
     }
-    if(src_corner_y0 < 0) {
-        corner_x0       = -src_corner_y0;
-        src_corner_y0   = 0;
-    }
-
-    if(src_corner_x1 > src->width()) {
-        src_corner_x1 = src->width();
-    }
-    if(src_corner_y1 > src->height()) {
-        src_corner_y1 = src->height();
+    if(src_y0 < 0) {
+        y0       = -src_y0;
+        src_y0   = 0;
     }
 
+    if(src_x1 > src->width()) {
+        src_x1 = src->width();
+    }
+    if(src_y1 > src->height()) {
+        src_y1 = src->height();
+    }
 
-    for(int src_x = src_corner_x0, x = corner_x0; src_x < src_corner_x1; src_x++, x++) {
-        for(int src_y = src_corner_y0, y = corner_y0; src_y < src_corner_y1; src_y++, y++) {
+
+    for(int src_x = src_x0, x = x0; src_x < src_x1; src_x++, x++) {
+        for(int src_y = src_y0, y = y0; src_y < src_y1; src_y++, y++) {
             *(*sub)(x, y, 0) = *(*src)(src_x, src_y, 0);
         }
     }
@@ -98,12 +107,12 @@ void Segmentation::segmentation(ImgData* src,
                                 int mask_size)
 {
 
-    unsigned int nthreads = 1;//std::thread::hardware_concurrency();
+    unsigned int nthreads = std::thread::hardware_concurrency();
     std::cout<<"nthreads: "<<nthreads<<std::endl;
 
-    float**             h     =  new float*[nthreads];
+    float**             h     = new float*[nthreads];
     Data2d<uint8_t>**   sub   = new Data2d<uint8_t>*[nthreads];
-    float*              val   = new float[nthreads];
+    float              val;//   = new float[nthreads];
 
     for(int i = 0; i < nthreads; i++) {
         sub[i] = new Data2d<uint8_t>(mask_size, mask_size, 1);
@@ -118,9 +127,9 @@ void Segmentation::segmentation(ImgData* src,
     int tid;
     #pragma omp parallel num_threads(nthreads)
     {
-#pragma omp for private(variance) private(m) private(tid) schedule(dynamic)
+#pragma omp for private(variance) private(m) private(tid) private(val) schedule(dynamic)
     for(int x = 0; x < src->width(); x++) {
-        for(int y = 0; y < src->height(); y ++) {
+        for(int y =0; y < src->height(); y ++) {
                 tid = omp_get_thread_num();
                 subset(src, sub[tid], x, y);
                 switch (method) {
@@ -130,8 +139,8 @@ void Segmentation::segmentation(ImgData* src,
                     // 2 mean(h) -> m
                     // 3 moment(h, m, 3) -> val
                     hist(sub[tid], h[tid]);
-                    m               = mean(h[tid]);
-                    val[tid]        = moment(h[tid], m, 3);
+                    m               = mean(sub[tid]); //(h[tid]);
+                    val             = moment(h[tid], m, 3);
                     break;
                 }
                 case DesctiptorR:
@@ -142,23 +151,33 @@ void Segmentation::segmentation(ImgData* src,
                     // R(variance) -> val
 
                     hist(sub[tid], h[tid]);
-                    m               = mean(h[tid]);
+                    m               = mean(sub[tid]); //(h[tid]);
                     variance        = moment(h[tid], m, 2);
-                    val[tid]        = R(variance);
+                    val             = R(variance);
                     break;
                 }
                 }
+
+//#pragma omp critical
+//                if(val[tid] > 255) {
+//                    val[tid] = 255;
+//                }
+//#pragma omp critical
+//                if(val[tid] < 0)
+//                {
+//                    val[tid] = 0;
+//                }
 #pragma omp critical
-                if(val[tid] > max)
+                if(val > max)
                 {
-                    max = val[tid];
+                    max = val;
                 }
 #pragma omp critical
-                if(val[tid] < min) {
-                    min = val[tid];
+                if(val < min) {
+                    min = val;
                 }
 #pragma omp critical
-                *(*buf)(x, y, 0) = (uint8_t) val[tid];
+                *(*buf)(x, y, 0) = val;
         }
     }
     }

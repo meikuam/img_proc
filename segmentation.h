@@ -23,7 +23,7 @@ enum Statistic {
 
 class Segmentation {
     static  void    hist(Data2d<uint8_t>* img, float *h);
-    static  float   mean(float *h);
+    static  float   mean(Data2d<uint8_t>* img/*, float *h*/);
     static  float   moment(float* h, float mean, int n);
     static  float   R(float variance);
 
