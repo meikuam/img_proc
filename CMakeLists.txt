@@ -26,6 +26,8 @@ set(SOURCES
     filterwindow.cpp
     transformswindow.cpp
     morphwindow.cpp
+    segmentationwindow.cpp
+    segmentation.cpp
     morph.cpp
     imgdata.cpp
     converter.cpp
@@ -40,6 +42,8 @@ set(HEADERS
     filterwindow.h
     transformswindow.h
     morphwindow.h
+    segmentationwindow.h
+    segmentation.h
     morph.h
     transforms.h
     imgdata.h
@@ -53,6 +57,7 @@ qt5_wrap_ui(UIS_HDRS
     filterwindow.ui
     transformswindow.ui
     morphwindow.ui
+    segmentationwindow.ui
 )
 
 add_executable(${project_name} WIN32 ${SOURCES} ${HEADERS} ${UIS_HDRS})

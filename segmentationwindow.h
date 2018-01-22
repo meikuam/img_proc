@@ -1,30 +1,29 @@
-#ifndef MORPHWINDOW_H
-#define MORPHWINDOW_H
+#ifndef SEGMENTATIONWINDOW_H
+#define SEGMENTATIONWINDOW_H
 
 #include <QMainWindow>
 #include <QLabel>
-#include <QFileDialog>
+//#include <QFileDialog>
 #include <QSignalSpy>
 #include <QTest>
 
 #include "imgdata.h"
-#include "filter.h"
-#include "morph.h"
+#include "segmentation.h"
 
 
 namespace Ui {
-class MorphWindow;
+class SegmentationWindow;
 }
 
-class MorphWindow : public QMainWindow
+class SegmentationWindow : public QMainWindow
 {
     Q_OBJECT
 
-    Method method_;
+    Statistic method_;
     bool ready = true;
 public:
-    explicit MorphWindow(ImgData *inp, QWidget *parent = 0 );
-    ~MorphWindow();
+    explicit SegmentationWindow(ImgData *inp, QWidget *parent = 0 );
+    ~SegmentationWindow();
     ImgData *input,
             *mask,
             *output;
@@ -32,19 +31,15 @@ public:
     Q_SIGNAL
     void setImgData(ImgData* out);
 
-    Q_SLOT
-    void gotReady();
 
 private slots:
     void on_applyButton_clicked();
     void on_cancelButton_clicked();
 
-    void on_getMaskButton_clicked();
-
     void on_comboBox_currentIndexChanged(int index);
 
 private:
-    Ui::MorphWindow    *ui;
+    Ui::SegmentationWindow    *ui;
 };
 
-#endif // MORPHWINDOW_H
+#endif // SEGMENTATIONWINDOW_H

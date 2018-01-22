@@ -154,6 +154,7 @@
     <addaction name="menu_correction"/>
     <addaction name="action_transforms"/>
     <addaction name="action_morph"/>
+    <addaction name="action_segmentation"/>
    </widget>
    <widget class="QMenu" name="menu_window">
     <property name="title">
@@ -366,6 +367,11 @@
   <action name="action_morph">
    <property name="text">
     <string>Морфологические штуки</string>
+   </property>
+  </action>
+  <action name="action_segmentation">
+   <property name="text">
+    <string>Сегментация</string>
    </property>
   </action>
  </widget>
@@ -720,6 +726,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>action_segmentation</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>on_action_segmentation_triggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>403</x>
+     <y>270</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>resizeEvent(QResizeEvent*)</signal>
@@ -735,5 +757,6 @@
   <slot>on_action_layers_triggered()</slot>
   <slot>on_action_transforms_triggered()</slot>
   <slot>on_action_morph_triggered()</slot>
+  <slot>on_action_segmentation_triggered()</slot>
  </slots>
 </ui>

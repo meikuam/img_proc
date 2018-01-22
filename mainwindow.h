@@ -7,6 +7,7 @@
 #include "filterwindow.h"
 #include "transformswindow.h"
 #include "morphwindow.h"
+#include "segmentationwindow.h"
 #include "imgdata.h"
 
 #include <QtWidgets>
@@ -19,6 +20,7 @@ class BrightnessWindow;
 class FilterWindow;
 class TransformsWindow;
 class MorphWindow;
+class SegmentationWindow;
 class ImageLabel;
 class ImgData;
 }
@@ -67,6 +69,7 @@ private slots:
 
     void on_action_transforms_triggered();
     void on_action_morph_triggered();
+    void on_action_segmentation_triggered();
 
 
 private:
@@ -76,6 +79,7 @@ private:
     FilterWindow        *fw;
     TransformsWindow    *tw;
     MorphWindow         *mw;
+    SegmentationWindow  *sw;
 
 protected:
 };

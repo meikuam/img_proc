@@ -105,6 +105,17 @@ void MainWindow::on_action_morph_triggered() {
     on_action_layers_triggered();
 }
 
+
+void MainWindow::on_action_segmentation_triggered() {
+    sw = new SegmentationWindow(getCurrentLayer(), this);
+    connect(sw, SIGNAL(setImgData(ImgData*)),
+            this, SLOT(addLayer(ImgData*)));
+    sw->setAttribute(Qt::WA_DeleteOnClose);
+    sw->show();
+    on_action_layers_triggered();
+
+}
+
 // ----------------------------------------------------
 // ------------------ layers --------------------------
 void MainWindow::addLayer(QString fileName) {
@@ -357,6 +368,7 @@ void MainWindow::setMenuEnabled(bool sw) {
     ui->menu_correction->setEnabled(sw);
     ui->action_transforms->setEnabled(sw);
     ui->action_morph->setEnabled(sw);
+    ui->action_segmentation->setEnabled(sw);
     //ui->menu_window // Окно
     ui->action_channels->setEnabled(sw);
     ui->action_layers->setEnabled(sw);
