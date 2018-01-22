@@ -1,5 +1,4 @@
 #include "transforms.h"
-#include "float.h"
 
 float norm(float from_min, float from_max, float to_min, float to_max, float x)
 {

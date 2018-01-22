@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <math.h>
+#include <float.h>
 
 #include "data2d.h"
 #include "imgdata.h"
@@ -17,6 +18,8 @@ enum Direction {
     Forward,
     Backward
 };
+
+float norm(float from_min, float from_max, float to_min, float to_max, float x);
 
 class Transforms {
     static void onedimHaar(float* data, int len);

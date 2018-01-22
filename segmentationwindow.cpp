@@ -21,16 +21,20 @@ SegmentationWindow::~SegmentationWindow()
 
 void SegmentationWindow::on_applyButton_clicked()
 {
-    switch (method_) {
-    case ThirdMoment:
-    {
-        break;
-    }
-    case DesctiptorR:
-    {
-        break;
-    }
-    }
+
+    qRegisterMetaType<ImgData*>("ImgData*");
+    QSignalSpy spy(this, SIGNAL(setImgData(ImgData*)));
+
+
+    neighbourSize   = ui->spinNeighbourBox->value();
+    minSquare       = ui->spinMinSquareBox->value();
+
+    output = new ImgData(*input);
+    Filter::filter(input, input, Gray);
+    Segmentation::segmentation(input, output, method_, neighbourSize);
+    setImgData(output);
+
+    bool check = spy.wait(1000);
 }
 
 void SegmentationWindow::on_cancelButton_clicked()

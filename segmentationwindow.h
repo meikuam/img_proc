@@ -8,6 +8,7 @@
 #include <QTest>
 
 #include "imgdata.h"
+#include "filter.h"
 #include "segmentation.h"
 
 
@@ -19,13 +20,13 @@ class SegmentationWindow : public QMainWindow
 {
     Q_OBJECT
 
-    Statistic method_;
-    bool ready = true;
+    Statistic   method_;
+    int         neighbourSize;
+    int         minSquare;
 public:
     explicit SegmentationWindow(ImgData *inp, QWidget *parent = 0 );
     ~SegmentationWindow();
     ImgData *input,
-            *mask,
             *output;
 
     Q_SIGNAL
