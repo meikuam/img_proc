@@ -5,16 +5,22 @@
 
 float  Segmentation::mean(Data2d<uint8_t>* img/*, float* h*/) {
     float m = 0.f;
-//    int L = 256;
     for(int x = 0; x < img->width(); x++) {
         for(int y = 0; y < img->height(); y++) {
             m += *(*img)(x, y, 0);
         }
     }
     m /= img->width() * img->height();
-//    for(int i = 0; i < L; i++) {
-//        m += i * h[i];
-//    }
+    return m;
+}
+
+float  Segmentation::mean(float* h) {
+    float m = 0.f;
+    int L = 256;
+    for(int i = 0; i < L; i++) {
+        m += i * h[i];
+    }
+    m * L;
     return m;
 }
 
@@ -56,15 +62,11 @@ float Segmentation::moment(float* h, float mean, int n) {
     if(n == 0) return 1.f;
     if(n == 1) return 0.f;
     float moment = 0.f;
-    float value = 0.f;
+//    float value = 0.f;
     int L = 256;
 
     for(int i = 0; i < L; i++) {
-        value = i - mean;
-        for(int k = 1; k < n; k++) {
-            value *= i - mean;
-        }
-        moment += value * h[i];
+        moment += pow(i - mean, n)* h[i];
     }
     return moment;
 }
@@ -173,13 +175,94 @@ float Segmentation::kmeansThold(Data2d<uint8_t>* img, float eps_max) {
     return T;
 }
 
+void Segmentation::dropRegions(Data2d<int>* src, ImgData* dst, int minSquare) {
+//ищем черные области
+    int max = 0;
+    for(int x = 0; x < src->width(); x++) {
+        for(int y = 0; y < src->height(); y++) {
+            if(*(*src)(x, y, 0) > max)
+                max = *(*src)(x, y, 0);
+        }
+    }
+    for(int i = 0; i < max; i++)
+    {
+        int reg = 0;
+        for(int x = 0; x < src->width(); x++) {
+            for(int y = 0; y < src->height(); y++) {
+                if(*(*src)(x, y, 0) == i)
+                    reg++;
+            }
+        }
+        if(reg < minSquare) {
+            for(int x = 0; x < src->width(); x++) {
+                for(int y = 0; y < src->height(); y++) {
+                    if(*(*src)(x, y, 0) == i)
+                        *(*src)(x, y, 0) = 0;
+                }
+            }
+        }
+    }
+    for(int x = 0; x < src->width(); x++) {
+        for(int y = 0; y < src->height(); y++) {
+            *(*dst)(x, y, 0) = *(*src)(x, y, 0) > 0 ? 255 : 0;
+        }
+    }
+
+}
+
+void Segmentation::labeling(ImgData* img, Data2d<int>* labels) {
+    int L = 1;
+    for(int x = 0; x < img->width(); x++) {
+        for(int y = 0; y < img->height(); y++) {
+            Fill(img, labels, x, y, L++);
+        }
+    }
+}
+
+void Segmentation::Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L) {
+    if((*(*labels)(x,y,0) == 0) && (*(*img)(x,y,0) == 0)) {
+        *(*labels)(x,y,0) = L;
+        if(x > 0)
+            Fill(img, labels, x - 1, y, L);
+        if(x < img->width() - 1)
+            Fill(img, labels, x + 1, y, L);
+        if(y > 0)
+            Fill(img, labels, x, y - 1, L);
+        if(y < img->height() - 1)
+            Fill(img, labels, x, y + 1, L);
+    }
+}
+
+void Segmentation::labeling(Data2d<int> *img, Data2d<int>* labels) {
+    int L = 1;
+    for(int x = 0; x < img->width(); x++) {
+        for(int y = 0; y < img->height(); y++) {
+            Fill(img, labels, x, y, L++);
+        }
+    }
+}
+
+void Segmentation::Fill(Data2d<int>* img, Data2d<int>* labels, int x, int y, int L) {
+    if((*(*labels)(x,y,0) == 0) && (*(*img)(x,y,0) == 0)) {
+        *(*labels)(x,y,0) = L;
+        if(x > 0)
+            Fill(img, labels, x - 1, y, L);
+        if(x < img->width() - 1)
+            Fill(img, labels, x + 1, y, L);
+        if(y > 0)
+            Fill(img, labels, x, y - 1, L);
+        if(y < img->height() - 1)
+            Fill(img, labels, x, y + 1, L);
+    }
+}
+
 void Segmentation::segmentation(ImgData* src,
                                 ImgData* dst,
                                 Statistic method,
                                 int mask_size)
 {
 
-    unsigned int nthreads = std::thread::hardware_concurrency();
+    unsigned int nthreads  = 1;//= std::thread::hardware_concurrency();
     std::cout<<"nthreads: "<<nthreads<<std::endl;
 float* h = new float[256];
 //    float**             h     = new float*[nthreads];
@@ -200,7 +283,7 @@ float* h = new float[256];
     float m;
     float variance;
     int tid;
-    hist(src, h);
+//    hist(src, h);
     #pragma omp parallel num_threads(nthreads)
     {
 #pragma omp for private(variance) private(m) private(tid) private(val) schedule(dynamic)
@@ -214,8 +297,8 @@ float* h = new float[256];
                     // 1 histogram -> h
                     // 2 mean(h) -> m
                     // 3 moment(h, m, 3) -> val
-//                    hist(sub[tid], h[tid]);
-                    m               = mean(sub[tid]); //(h[tid]);
+                    hist(sub[tid], h);
+                    m               = /*mean(sub[tid]); //*/mean(h);
                     //                    val             = moment(h[tid], m, 3);
                     val             = moment(h, m, 3);
                     break;
@@ -227,8 +310,8 @@ float* h = new float[256];
                     // 3 moment(h, m, 2) -> variance
                     // R(variance) -> val
 
-//                    hist(sub[tid], h[tid]);
-                    m               = mean(sub[tid]); //(h[tid]);
+                    hist(sub[tid], h);
+                    m               = /*mean(sub[tid]); //*/mean(h);
 //                    variance        = moment(h[tid], m, 2);
                     variance        = moment(h, m, 2);
                     val             = R(variance);
@@ -237,13 +320,13 @@ float* h = new float[256];
                 }
 
 #pragma omp critical
-                if(val > 500) {
-                    val = 500;
+                if(val > 1270) {
+                    val = 1270;
                 }
 #pragma omp critical
-                if(val < -500)
+                if(val < -1270)
                 {
-                    val = -500;
+                    val = -1270;
                 }
 #pragma omp critical
                 if(val > max)
@@ -269,30 +352,47 @@ float* h = new float[256];
     float* h_img = new float[256];
     hist(res_buf, h_img);
 
-    float T = kmeansThold(res_buf);
+    float T = kmeansThold(res_buf, 5);
+
+    Data2d<int>* kek_img = new Data2d<int>(src->width(), src->height(), 1);
+    Data2d<int>* kek_lab = new Data2d<int>(src->width(), src->height(), 1);
     for(int x = 0; x < src->width(); x++) {
         for(int y = 0; y < src->height(); y++) {
-            *(*res_buf)(x, y, 0) = *(*res_buf)(x, y, 0) > T ? 255 : 0;
+            *(*kek_img)(x, y, 0) = *(*res_buf)(x, y, 0) > T ? 255 : 0;
+            *(*kek_lab)(x, y, 0) = 0;
         }
     }
+//    for(int x = 0; x < src->width(); x++) {
+//        for(int y = 0; y < src->height(); y++) {
+//            *(*res_buf)(x, y, 0) = *(*res_buf)(x, y, 0) > T ? 255 : 0;
+//        }
+//    }
 
     //----------------
 
+
+    labeling(kek_img, kek_lab);
+    dropRegions(kek_lab, dst, 50);
     //----------------
-    for(int x = 0; x < src->width(); x++) {
-        for(int y = 0; y < src->height(); y++) {
-            uint8_t res = *(*res_buf)(x, y, 0);
-            if(res > 0) {
-                *(*dst)(x, y, 0) = *(*src)(x, y, 0);
-                *(*dst)(x, y, 1) = *(*src)(x, y, 1);
-                *(*dst)(x, y, 2) = *(*src)(x, y, 2);
-            } else {
-                *(*dst)(x, y, 0) = 0;
-                *(*dst)(x, y, 1) = 20;
-                *(*dst)(x, y, 2) = 255;
-            }
-        }
-    }
+//    for(int x = 0; x < src->width(); x++) {
+//        for(int y = 0; y < src->height(); y++) {
+//            uint8_t res = *(*res_buf)(x, y, 0);
+
+//            *(*dst)(x, y, 0) = *(*res_buf)(x, y, 0);
+//            *(*dst)(x, y, 1) = *(*res_buf)(x, y, 0) > T ? 255 : 0;;
+////            *(*dst)(x, y, 2) = *(*res_buf)(x, y, 0);
+
+////            if(res > 0) {
+////                *(*dst)(x, y, 0) = *(*src)(x, y, 0);
+////                *(*dst)(x, y, 1) = *(*src)(x, y, 1);
+////                *(*dst)(x, y, 2) = *(*src)(x, y, 2);
+////            } else {
+////                *(*dst)(x, y, 0) = 0;
+////                *(*dst)(x, y, 1) = 20;
+////                *(*dst)(x, y, 2) = 255;
+////            }
+//        }
+//    }
 
     for(int i = 0; i < nthreads; i++) {
         delete sub[i];
