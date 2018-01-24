@@ -30,7 +30,7 @@ void SegmentationWindow::on_applyButton_clicked()
     minSquare       = ui->spinMinSquareBox->value();
 
     output = new ImgData(*input);
-    Filter::filter(input, input, Gray);
+
     Segmentation::segmentation(input, output, method_, neighbourSize);
     setImgData(output);
 
