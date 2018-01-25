@@ -61,6 +61,13 @@
     </item>
     <item>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="4" column="0">
+       <widget class="QLabel" name="labelSize">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Количество соседних &lt;/p&gt;&lt;p&gt;пикселей&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="1">
        <widget class="QSpinBox" name="spinNeighbourBox">
         <property name="minimum">
@@ -87,12 +94,8 @@
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="labelSize">
-        <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Количество соседних &lt;/p&gt;&lt;p&gt;пикселей&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-        </property>
-       </widget>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBox"/>
       </item>
       <item row="5" column="0">
        <widget class="QLabel" name="labelSquare">
@@ -111,8 +114,20 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="comboBox"/>
+      <item row="6" column="0">
+       <widget class="QCheckBox" name="checkMultithreadBox">
+        <property name="text">
+         <string>Многопоточно</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="1">
+       <widget class="QCheckBox" name="checkUseLocalHistBox">
+        <property name="text">
+         <string>Использовать 
+локальные гистограммы</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
