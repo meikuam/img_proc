@@ -12,6 +12,10 @@ SegmentationWindow::SegmentationWindow(ImgData *src, QWidget *parent) :
     src_data = src;
     ui->comboBox->addItem("Третий момент");
     ui->comboBox->addItem("Дескрипторы относительной гладкости R");
+    ui->comboBox->addItem("Мера однородности U");
+    ui->comboBox->addItem("Энтропия");
+    ui->comboBox->addItem("Стандартное отклонение");
+    ui->comboBox->addItem("Среднее");
 }
 
 SegmentationWindow::~SegmentationWindow()
@@ -42,6 +46,42 @@ void SegmentationWindow::on_applyButton_clicked()
         filtred_data->setName("Filtred stat DesctiptorR " + filtred_data->getName());
         out_data->setName("Out DesctiptorR " + out_data->getName());
         break;
+    case Uniformity:
+    {
+        stat_data->setName("Stat Uniformity " + stat_data->getName());
+        bin_data->setName("Bin stat Uniformity " + bin_data->getName());
+        filtred_data->setName("Filtred stat Uniformity " + filtred_data->getName());
+        out_data->setName("Out Uniformity " + out_data->getName());
+        //мера однородности
+        break;
+    }
+    case Entropy:
+    {
+        stat_data->setName("Stat Entropy " + stat_data->getName());
+        bin_data->setName("Bin stat Entropy " + bin_data->getName());
+        filtred_data->setName("Filtred stat Entropy " + filtred_data->getName());
+        out_data->setName("Out Entropy " + out_data->getName());
+        //энтропия
+        break;
+    }
+    case StandardDeviation:
+    {
+        stat_data->setName("Stat StandardDeviation " + stat_data->getName());
+        bin_data->setName("Bin stat StandardDeviation " + bin_data->getName());
+        filtred_data->setName("Filtred stat StandardDeviation " + filtred_data->getName());
+        out_data->setName("Out StandardDeviation " + out_data->getName());
+        //стандартное отклонение
+        break;
+    }
+    case Mean:
+    {
+        stat_data->setName("Stat Mean " + stat_data->getName());
+        bin_data->setName("Bin stat Mean " + bin_data->getName());
+        filtred_data->setName("Filtred stat Mean " + filtred_data->getName());
+        out_data->setName("Out Mean " + out_data->getName());
+        //среднее
+        break;
+    }
     }
 
 
@@ -74,6 +114,18 @@ void SegmentationWindow::on_comboBox_currentIndexChanged(int index)
         break;
     case 1:
         method_ = DesctiptorR;
+        break;
+    case 2:
+        method_ = Uniformity;
+        break;
+    case 3:
+        method_ = Entropy;
+        break;
+    case 4:
+        method_ = StandardDeviation;
+        break;
+    case 5:
+        method_ = Mean;
         break;
     }
 }

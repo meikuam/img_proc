@@ -20,7 +20,11 @@ using namespace std;
 
 enum Statistic {
     ThirdMoment,
-    DesctiptorR
+    DesctiptorR,
+    Uniformity,
+    Entropy,
+    StandardDeviation,
+    Mean
 };
 
 class Segmentation {
@@ -36,6 +40,8 @@ class Segmentation {
 
     static  float   mean(Data2d<uint8_t>* img);
     static  float   mean(float *h);
+
+    static  float   U(float* h);
 
     static  void    hist(Data2d<uint8_t>* img, float *h);
     static  void    hist(ImgData *img, float* h);

@@ -128,16 +128,10 @@ void Segmentation::segmentation(ImgData* src_data,
                         // 2 mean(h) -> m
                         // 3 moment(h, m, 3) -> val
                         if(useLocalHist)
-                        {
                             hist(sub[tid], h[tid]);
-                            m = mean(sub[tid]);
-                            //m = mean(h[tid]);
-                            val = moment(h[tid], m, 3);
-                        } else {
-                            m = mean(sub[tid]);
-                            //m = mean(h[0]);
-                            val = moment(h[0], m, 3);
-                        }
+                        m = mean(sub[tid]);
+                        //m = mean(h[tid]);
+                        val = moment(h[tid], m, 3);
                         break;
                     }
                     case DesctiptorR:
@@ -148,17 +142,35 @@ void Segmentation::segmentation(ImgData* src_data,
                         // R(variance) -> val
 
                         if(useLocalHist)
-                        {
                             hist(sub[tid], h[tid]);
-                            m = mean(sub[tid]);
-                            //m = mean(h[tid]);
-                            variance = moment(h[tid], m, 2);
-                        } else {
-                            m = mean(sub[tid]);
-                            //m = mean(h[0]);
-                            variance = moment(h[0], m, 2);
-                        }
+                        m = mean(sub[tid]);
+                        //m = mean(h[tid]);
+                        variance = moment(h[tid], m, 2);
                         val = R(variance);
+                        break;
+                    }
+                    case Uniformity:
+                    {
+                        // 1 histogram -> h
+                        // 2 U -> val
+                        if(useLocalHist)
+                            hist(sub[tid], h[tid]);
+                        val = U(h[tid]);
+                        break;
+                    }
+                    case Entropy:
+                    {
+                        //энтропия
+                        break;
+                    }
+                    case StandardDeviation:
+                    {
+                        //стандартное отклонение
+                        break;
+                    }
+                    case Mean:
+                    {
+                        //среднее
                         break;
                     }
                     }
@@ -462,6 +474,16 @@ float Segmentation::moment(float* h, float mean, int n) {
 
 float Segmentation::R(float variance) {
     return 1.f - (1.f / (1.f + variance));
+}
+
+float Segmentation::U(float* h) {
+    float u = 0.f;
+    int L = 256;
+
+    for(int i = 0; i < L; i++) {
+        u += h[i] * h[i];
+    }
+    return u;
 }
 
 void Segmentation::subset(ImgData* src, Data2d<uint8_t>* sub, int center_x, int center_y) {
