@@ -25,13 +25,10 @@ enum Statistic {
 
 class Segmentation {
 
-    static void dropRegions(Data2d<int> *src, ImgData* dst, int minSquare = 10);
+    static void dropRegions(Data2d<int> *src, ImgData* dst, int regions, int minSquare = 10, bool multithread = true);
 
-    static void Fill(Data2d<int> *img, Data2d<int>* labels, int x, int y, int L);
-    static void Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L);
-
-    static void labeling(Data2d<int> *img, Data2d<int> *labels);
-    static void labeling(ImgData* img, Data2d<int>* labels);
+    static bool Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L, int val);
+    static int labeling(ImgData* img, Data2d<int>* labels, int val);
 
     //----------------------------------------------------------------
     static  float   moment(float* h, float mean, int n);
@@ -50,6 +47,12 @@ class Segmentation {
 
 public:
 static void segmentation(ImgData* src, ImgData* dst, Statistic method, int mask_size, bool loc_hist = true, bool multithread = true);
+
+static void segmentation(ImgData* src_data,
+                         ImgData* stat_data, ImgData* bin_data, ImgData* filtred_data, ImgData* out_data,
+                         Statistic method,
+                         int neighbour, int minSquare,
+                         bool useLocalHist = true, bool multithread = true);
 };
 
 #endif // SEGMENTATION_H

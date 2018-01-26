@@ -1,85 +1,252 @@
 #include "segmentation.h"
 
 
-void Segmentation::dropRegions(Data2d<int>* src, ImgData* dst, int minSquare) {
-//ищем черные области
-    int max = 0;
-    for(int x = 0; x < src->width(); x++) {
-        for(int y = 0; y < src->height(); y++) {
-            if(*(*src)(x, y, 0) > max)
-                max = *(*src)(x, y, 0);
-        }
-    }
-    for(int i = 0; i < max; i++)
+void Segmentation::dropRegions(Data2d<int>* src, ImgData* dst, int regions, int minSquare, bool multithread) {
+//    cout<<"dropRegions:  square calc.";
+    unsigned int nthreads = multithread ? std::thread::hardware_concurrency() : 1;
+
+    #pragma omp parallel num_threads(nthreads)
     {
-        int reg = 0;
-        for(int x = 0; x < src->width(); x++) {
-            for(int y = 0; y < src->height(); y++) {
-                if(*(*src)(x, y, 0) == i)
-                    reg++;
-            }
-        }
-        if(reg < minSquare) {
+        #pragma omp for schedule(dynamic)
+        for(int i = 0; i < regions; i++)
+        {
+            int square = 0;
             for(int x = 0; x < src->width(); x++) {
                 for(int y = 0; y < src->height(); y++) {
                     if(*(*src)(x, y, 0) == i)
-                        *(*src)(x, y, 0) = 0;
+                        square++;
+                }
+            }
+            if(square < minSquare) {
+//                cout<<"dropRegions:  label("<<i<<") square: "<<square<<" removing; ";
+                for(int x = 0; x < src->width(); x++) {
+                    for(int y = 0; y < src->height(); y++) {
+                        if(*(*src)(x, y, 0) == i)
+                            *(*src)(x, y, 0) = 0;
+                    }
+                }
+            } else {
+//                cout<<"dropRegions:  label("<<i<<") square: "<<square<<" will remain; ";
+            }
+        }
+    }
+//    cout<<"dropRegions:  fill dst image: ";
+    for(int x = 0; x < dst->width(); x++) {
+        for(int y = 0; y < dst->height(); y++) {
+            for(int c = 0; c < dst->depth(); c++)
+            *(*dst)(x, y, c) = *(*src)(x, y, 0) > 0 ? 0 : 255;
+        }
+    }
+
+}
+
+int Segmentation::labeling(ImgData* img, Data2d<int>* labels, int val) {
+    int L = 1;
+    for(int x = 0; x < img->width(); x++) {
+        for(int y = 0; y < img->height(); y++) {
+            *(*labels)(x, y, 0) = 0;
+        }
+    }
+    for(int x = 0; x < img->width(); x++) {
+        for(int y = 0; y < img->height(); y++) {
+            if(Fill(img, labels, x, y, L, val)) {
+                L++;
+            }
+        }
+    }
+//    cout<<"labeling:  L: "<<L;
+    return L;
+}
+
+bool Segmentation::Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L, int val) {
+    if((*(*labels)(x, y, 0) == 0) && (*(*img)(x, y, 0) == val)) {
+        *(*labels)(x, y, 0) = L;
+        if(x > 0)
+            Fill(img, labels, x - 1, y, L, val);
+        if(x < img->width() - 1)
+            Fill(img, labels, x + 1, y, L, val);
+        if(y > 0)
+            Fill(img, labels, x, y - 1, L, val);
+        if(y < img->height() - 1)
+            Fill(img, labels, x, y + 1, L, val);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+
+void Segmentation::segmentation(ImgData* src_data,
+                  ImgData* stat_data, ImgData* bin_data, ImgData* filtred_data, ImgData* out_data,
+                  Statistic method,
+                  int neighbour, int minSquare,
+                  bool useLocalHist, bool multithread)
+{
+    unsigned int nthreads = multithread ? std::thread::hardware_concurrency() : 1;
+//    std::cout<<"nthreads: "<<nthreads<<std::endl;
+
+    // vars
+    float val;
+    float min = FLT_MAX,
+          max = FLT_MIN;
+    float m, variance;
+    int tid;
+    int width = src_data->width(),
+        height = src_data->height();
+
+    float**             h     = new float*[nthreads];
+    Data2d<uint8_t>**   sub   = new Data2d<uint8_t>*[nthreads];
+
+    for(int i = 0; i < nthreads; i++) {
+        sub[i] = new Data2d<uint8_t>(neighbour, neighbour, 1);
+        h[i] = new float[256];
+    }
+
+    ImgData*            inp_data        = new ImgData(*src_data);
+    Data2d<float>*      stat_data_fp    = new Data2d<float>(src_data->width(), src_data->height(), 1);
+    // operations
+
+//--------------------------input to gray--------------------------
+//    cout<<"input to gray"<<endl;
+    Filter::filter(inp_data, inp_data, Gray);
+//-----------------------gray to stat_data_fp----------------------
+//    cout<<"gray to stat_data_fp"<<endl;
+    if(!useLocalHist)
+        hist(inp_data, h[0]);
+    #pragma omp parallel num_threads(nthreads)
+    {
+        #pragma omp for private(tid) private(variance) private(m) private(val) schedule(dynamic)
+            for(int x = 0; x < width; x++) {
+                for(int y = 0; y < height; y ++) {
+                    tid = omp_get_thread_num();                     // thread id
+
+                    subset(inp_data, sub[tid], x, y);               // get subset of image
+                    switch (method) {
+                    case ThirdMoment:
+                    {
+                        // 1 histogram -> h
+                        // 2 mean(h) -> m
+                        // 3 moment(h, m, 3) -> val
+                        if(useLocalHist)
+                        {
+                            hist(sub[tid], h[tid]);
+                            m = mean(sub[tid]);
+                            //m = mean(h[tid]);
+                            val = moment(h[tid], m, 3);
+                        } else {
+                            m = mean(sub[tid]);
+                            //m = mean(h[0]);
+                            val = moment(h[0], m, 3);
+                        }
+                        break;
+                    }
+                    case DesctiptorR:
+                    {
+                        // 1 histogram -> h
+                        // 2 mean(h) -> m
+                        // 3 moment(h, m, 2) -> variance
+                        // R(variance) -> val
+
+                        if(useLocalHist)
+                        {
+                            hist(sub[tid], h[tid]);
+                            m = mean(sub[tid]);
+                            //m = mean(h[tid]);
+                            variance = moment(h[tid], m, 2);
+                        } else {
+                            m = mean(sub[tid]);
+                            //m = mean(h[0]);
+                            variance = moment(h[0], m, 2);
+                        }
+                        val = R(variance);
+                        break;
+                    }
+                    }
+//                    cout<<val<<" ";
+//                    val = val >  250 ?  250 : val;
+//                    val = val < -250 ? -250 : val;
+                    #pragma omp critical
+                    {
+                        if(val > max)
+                        {
+                            max = val;
+                        }
+                        if(val < min) {
+                            min = val;
+                        }
+                        *(*stat_data_fp)(x, y, 0) = val;
+                    }
+            }
+        }
+    }
+//    cout<<"max: "<<max<<" min: "<<min<<endl;
+//--------------stat_data_fp -> normalize -> stat_data-------------
+//    cout<<"stat_data_fp -> normalize -> stat_data"<<endl;
+    for(int x = 0; x < width; x++) {
+        for(int y = 0; y < height; y++) {
+            uint8_t res = norm(min, max, 0, 255, *(*stat_data_fp)(x, y, 0));
+
+            for(int c = 0; c < stat_data->depth(); c++) {
+                *(*stat_data)(x, y, c) = res;
+            }
+        }
+    }
+    delete stat_data_fp;
+    delete inp_data;
+    for(int i = 0; i < nthreads; i++) {
+        delete sub[i];
+        delete h[i];
+    }
+    delete sub;
+//--------------stat_data -> threshold -> bin_data-----------------
+    //TODO: ручное задание порога бинаризации и другие методы
+//    cout<<"stat_data -> threshold -> bin_data"<<endl;
+    hist(stat_data, h[0]);
+    float T = kmeansThold(stat_data, 5);                               // set threshold
+
+    for(int x = 0; x < width; x++) {
+        for(int y = 0; y < height; y++) {
+            for(int c = 0; c < stat_data->depth(); c++) {
+                *(*bin_data)(x, y, c) = *(*stat_data)(x, y, c) > T ? 255 : 0;
+            }
+        }
+    }
+    delete h;
+//-------------bin_data -> (minSquare) -> filtred_data-------------
+//    cout<<"bin_data -> (minSquare) -> filtred_data"<<endl;
+
+//    cout<<" labeling(bin_data, labels, 0);"<<endl;
+    Data2d<int>* labels = new Data2d<int>(bin_data->width(), bin_data->height(), 1);
+    int l = labeling(bin_data, labels, 0);
+//    cout<<" dropRegions(labels, filtred_data)"<<endl;
+    dropRegions(labels, filtred_data, l, minSquare, multithread);
+    delete labels;
+//-----filtred_data -> Morphology Edge Detection -> edge_data------
+    ImgData* edge_data = new ImgData(*filtred_data);
+    Filter::filter(filtred_data, edge_data, Morphology);
+//--------------filtred_data -> (src_data) -> out_data-------------
+//    cout<<"filtred_data -> (src_data) -> out_data"<<endl;
+    for(int x = 0; x < width; x++) {
+        for(int y = 0; y < height; y++) {
+            if(*(*filtred_data)(x, y, 0) == 255) {
+                for(int c = 0; c < out_data->depth(); c++) {
+                    *(*out_data)(x, y, c) = *(*src_data)(x, y, c);
+                }
+            }
+            if(*(*edge_data)(x, y, 0) == 255) {
+                *(*out_data)(x, y, 0) = 250;
+                *(*out_data)(x, y, 1) = 20;
+                *(*out_data)(x, y, 2) = 20;
+            }
+            if(*(*filtred_data)(x, y, 0) == 0 && *(*edge_data)(x, y, 0) == 0) {
+                for(int c = 0; c < out_data->depth(); c++) {
+                    *(*out_data)(x, y, c) = 0;
                 }
             }
         }
     }
-    for(int x = 0; x < src->width(); x++) {
-        for(int y = 0; y < src->height(); y++) {
-            *(*dst)(x, y, 0) = *(*src)(x, y, 0) > 0 ? 255 : 0;
-        }
-    }
 
-}
 
-void Segmentation::labeling(ImgData* img, Data2d<int>* labels) {
-    int L = 1;
-    for(int x = 0; x < img->width(); x++) {
-        for(int y = 0; y < img->height(); y++) {
-            Fill(img, labels, x, y, L++);
-        }
-    }
-}
-
-void Segmentation::Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L) {
-    if((*(*labels)(x,y,0) == 0) && (*(*img)(x,y,0) == 0)) {
-        *(*labels)(x,y,0) = L;
-        if(x > 0)
-            Fill(img, labels, x - 1, y, L);
-        if(x < img->width() - 1)
-            Fill(img, labels, x + 1, y, L);
-        if(y > 0)
-            Fill(img, labels, x, y - 1, L);
-        if(y < img->height() - 1)
-            Fill(img, labels, x, y + 1, L);
-    }
-}
-
-void Segmentation::labeling(Data2d<int> *img, Data2d<int>* labels) {
-    int L = 1;
-    for(int x = 0; x < img->width(); x++) {
-        for(int y = 0; y < img->height(); y++) {
-            Fill(img, labels, x, y, L++);
-        }
-    }
-}
-
-void Segmentation::Fill(Data2d<int>* img, Data2d<int>* labels, int x, int y, int L) {
-    if((*(*labels)(x,y,0) == 0) && (*(*img)(x,y,0) == 0)) {
-        *(*labels)(x,y,0) = L;
-        if(x > 0)
-            Fill(img, labels, x - 1, y, L);
-        if(x < img->width() - 1)
-            Fill(img, labels, x + 1, y, L);
-        if(y > 0)
-            Fill(img, labels, x, y - 1, L);
-        if(y < img->height() - 1)
-            Fill(img, labels, x, y + 1, L);
-    }
 }
 
 void Segmentation::segmentation(ImgData* src,

@@ -21,13 +21,15 @@ class SegmentationWindow : public QMainWindow
     Q_OBJECT
 
     Statistic   method_;
-    int         neighbourSize;
-    int         minSquare;
+
 public:
-    explicit SegmentationWindow(ImgData *inp, QWidget *parent = 0 );
+    explicit SegmentationWindow(ImgData *src, QWidget *parent = 0 );
     ~SegmentationWindow();
-    ImgData *input,
-            *output;
+    ImgData *src_data,
+            *out_data,
+            *stat_data,
+            *bin_data,
+            *filtred_data;
 
     Q_SIGNAL
     void setImgData(ImgData* out);
