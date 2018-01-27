@@ -13,9 +13,9 @@ SegmentationWindow::SegmentationWindow(ImgData *src, QWidget *parent) :
     ui->comboBox->addItem("Третий момент");
     ui->comboBox->addItem("Дескрипторы относительной гладкости R");
     ui->comboBox->addItem("Мера однородности U");
-    ui->comboBox->addItem("Энтропия");
     ui->comboBox->addItem("Стандартное отклонение");
     ui->comboBox->addItem("Среднее");
+    //    ui->comboBox->addItem("Энтропия");
 }
 
 SegmentationWindow::~SegmentationWindow()
@@ -108,24 +108,34 @@ void SegmentationWindow::on_cancelButton_clicked()
 
 void SegmentationWindow::on_comboBox_currentIndexChanged(int index)
 {
+
     switch (index) {
     case 0:
+        ui->checkUseLocalHistBox->setEnabled(true);
         method_ = ThirdMoment;
         break;
     case 1:
+        ui->checkUseLocalHistBox->setEnabled(true);
         method_ = DesctiptorR;
         break;
     case 2:
+        ui->checkUseLocalHistBox->setChecked(true);
+        ui->checkUseLocalHistBox->setEnabled(false);
         method_ = Uniformity;
         break;
     case 3:
-        method_ = Entropy;
-        break;
-    case 4:
+        ui->checkUseLocalHistBox->setEnabled(true);
         method_ = StandardDeviation;
         break;
-    case 5:
+    case 4:
+        ui->checkUseLocalHistBox->setChecked(true);
+        ui->checkUseLocalHistBox->setEnabled(false);
         method_ = Mean;
+        break;
+    case 5:
+        ui->checkUseLocalHistBox->setChecked(true);
+        ui->checkUseLocalHistBox->setEnabled(false);
+        method_ = Entropy;
         break;
     }
 }

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>360</width>
-    <height>264</height>
+    <width>421</width>
+    <height>310</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -70,6 +70,9 @@
       </item>
       <item row="4" column="1">
        <widget class="QSpinBox" name="spinNeighbourBox">
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
         <property name="minimum">
          <number>3</number>
         </property>
@@ -83,11 +86,14 @@
       </item>
       <item row="5" column="1">
        <widget class="QSpinBox" name="spinMinSquareBox">
+        <property name="readOnly">
+         <bool>false</bool>
+        </property>
         <property name="minimum">
          <number>1</number>
         </property>
         <property name="maximum">
-         <number>200</number>
+         <number>9999</number>
         </property>
         <property name="value">
          <number>50</number>
@@ -126,6 +132,9 @@
       </item>
       <item row="6" column="1">
        <widget class="QCheckBox" name="checkUseLocalHistBox">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="text">
          <string>Использовать 
 локальные гистограммы</string>

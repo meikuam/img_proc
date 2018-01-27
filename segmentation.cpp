@@ -83,14 +83,14 @@ void Segmentation::segmentation(ImgData* src_data,
                   bool useLocalHist, bool multithread)
 {
     unsigned int nthreads = multithread ? std::thread::hardware_concurrency() : 1;
-//    std::cout<<"nthreads: "<<nthreads<<std::endl;
+    std::cout<<"nthreads: "<<nthreads<<std::endl;
 
     // vars
-    float val;
+    float L = 256;
+    int binVal = 0;
     float min = FLT_MAX,
           max = FLT_MIN;
-    float m, variance;
-    int tid;
+
     int width = src_data->width(),
         height = src_data->height();
 
@@ -103,97 +103,117 @@ void Segmentation::segmentation(ImgData* src_data,
     }
 
     ImgData*            inp_data        = new ImgData(*src_data);
-    Data2d<float>*      stat_data_fp    = new Data2d<float>(src_data->width(), src_data->height(), 1);
+    Data2d<float>*      stat_data_fp    = new Data2d<float>(width, height, 1);
     // operations
 
 //--------------------------input to gray--------------------------
-//    cout<<"input to gray"<<endl;
+    cout<<"input to gray"<<endl;
     Filter::filter(inp_data, inp_data, Gray);
 //-----------------------gray to stat_data_fp----------------------
-//    cout<<"gray to stat_data_fp"<<endl;
+    cout<<"gray to stat_data_fp"<<endl;
     if(!useLocalHist)
         hist(inp_data, h[0]);
-    #pragma omp parallel num_threads(nthreads)
-    {
-        #pragma omp for private(tid) private(variance) private(m) private(val) schedule(dynamic)
-            for(int x = 0; x < width; x++) {
-                for(int y = 0; y < height; y ++) {
-                    tid = omp_get_thread_num();                     // thread id
+    #pragma omp parallel for schedule(static) num_threads(nthreads)
+    for(int x = 0; x < width; x++) {
+        for(int y = 0; y < height; y ++) {
+            int tid = omp_get_thread_num();                     // thread id
+            float m, variance, val;
+            subset(inp_data, sub[tid], x, y);               // get subset of image
+            switch (method) {
+            case ThirdMoment:
+            {
+                // 1 histogram -> h
+                // 2 mean(h) -> m
+                // 3 moment(h, m, 3) -> val
+                if(useLocalHist) {
+                    hist(sub[tid], h[tid]);
+                    m = mean(sub[tid]);
+                    val = moment(h[tid], m, 3) / (L * L * L);
+                } else {
+                    m = mean(sub[tid]);
+                    val = moment(h[0], m, 3) / (L * L * L);
+                }
+                break;
+            }
+            case DesctiptorR:
+            {
+                // 1 histogram -> h
+                // 2 mean(h) -> m
+                // 3 moment(h, m, 2) -> variance
+                // R(variance) -> val
 
-                    subset(inp_data, sub[tid], x, y);               // get subset of image
-                    switch (method) {
-                    case ThirdMoment:
-                    {
-                        // 1 histogram -> h
-                        // 2 mean(h) -> m
-                        // 3 moment(h, m, 3) -> val
-                        if(useLocalHist)
-                            hist(sub[tid], h[tid]);
-                        m = mean(sub[tid]);
-                        //m = mean(h[tid]);
-                        val = moment(h[tid], m, 3);
-                        break;
-                    }
-                    case DesctiptorR:
-                    {
-                        // 1 histogram -> h
-                        // 2 mean(h) -> m
-                        // 3 moment(h, m, 2) -> variance
-                        // R(variance) -> val
+                if(useLocalHist) {
+                    hist(sub[tid], h[tid]);
+                    m = mean(sub[tid]);
+                    variance = moment(h[tid], m, 2);
+                    val = R(variance);
+                } else {
+                    m = mean(sub[tid]);
+                    variance = moment(h[0], m, 2);
+                    val = R(variance);
+                }
+                break;
+            }
+            case Uniformity:
+            {
+                // 1 histogram -> h
+                // 2 U -> val
+                if(useLocalHist) {
+                    hist(sub[tid], h[tid]);
+                    val = U(h[tid]);
+                }
+                break;
+            }
+            case Entropy:
+            {
+                // 1 histogram -> h
+                // 2 entropy
+                if(useLocalHist) {
+                    hist(sub[tid], h[tid]);
+                    val = entropy(h[tid]);
+                }
+                break;
+            }
+            case StandardDeviation:
+            {
 
-                        if(useLocalHist)
-                            hist(sub[tid], h[tid]);
-                        m = mean(sub[tid]);
-                        //m = mean(h[tid]);
-                        variance = moment(h[tid], m, 2);
-                        val = R(variance);
-                        break;
-                    }
-                    case Uniformity:
-                    {
-                        // 1 histogram -> h
-                        // 2 U -> val
-                        if(useLocalHist)
-                            hist(sub[tid], h[tid]);
-                        val = U(h[tid]);
-                        break;
-                    }
-                    case Entropy:
-                    {
-                        //энтропия
-                        break;
-                    }
-                    case StandardDeviation:
-                    {
-                        //стандартное отклонение
-                        break;
-                    }
-                    case Mean:
-                    {
-                        //среднее
-                        break;
-                    }
-                    }
-//                    cout<<val<<" ";
-//                    val = val >  250 ?  250 : val;
-//                    val = val < -250 ? -250 : val;
-                    #pragma omp critical
-                    {
-                        if(val > max)
-                        {
-                            max = val;
-                        }
-                        if(val < min) {
-                            min = val;
-                        }
-                        *(*stat_data_fp)(x, y, 0) = val;
-                    }
+                if(useLocalHist) {
+                    hist(sub[tid], h[tid]);
+                    m = mean(sub[tid]);
+                    variance = moment(h[tid], m, 2);
+                    val = sqrt(variance);
+                } else {
+                    m = mean(sub[tid]);
+                    variance = moment(h[0], m, 2);
+                    val = sqrt(variance);
+                }
+                break;
+            }
+            case Mean:
+            {
+                val = mean(sub[tid]);
+                break;
+            }
+            }
+            //                    cout<<val<<" ";
+            //                    val = val >  250 ?  250 : val;
+            //                    val = val < -250 ? -250 : val;
+            #pragma omp critical
+            {
+                if(val > max)
+                {
+                    max = val;
+                }
+                if(val < min) {
+                    min = val;
+                }
+                *(*stat_data_fp)(x, y, 0) = val;
+            }
             }
         }
-    }
-//    cout<<"max: "<<max<<" min: "<<min<<endl;
+    cout<<"max: "<<max<<" min: "<<min<<endl;
 //--------------stat_data_fp -> normalize -> stat_data-------------
-//    cout<<"stat_data_fp -> normalize -> stat_data"<<endl;
+    cout<<"stat_data_fp -> normalize -> stat_data"<<endl;
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
             uint8_t res = norm(min, max, 0, 255, *(*stat_data_fp)(x, y, 0));
@@ -203,18 +223,12 @@ void Segmentation::segmentation(ImgData* src_data,
             }
         }
     }
-    delete stat_data_fp;
-    delete inp_data;
-    for(int i = 0; i < nthreads; i++) {
-        delete sub[i];
-        delete h[i];
-    }
-    delete sub;
+
 //--------------stat_data -> threshold -> bin_data-----------------
     //TODO: ручное задание порога бинаризации и другие методы
-//    cout<<"stat_data -> threshold -> bin_data"<<endl;
+    cout<<"stat_data -> threshold -> bin_data"<<endl;
     hist(stat_data, h[0]);
-    float T = kmeansThold(stat_data, 5);                               // set threshold
+    float T = kmeansThold(stat_data, 0, multithread);                   // set threshold
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
@@ -223,21 +237,39 @@ void Segmentation::segmentation(ImgData* src_data,
             }
         }
     }
-    delete h;
 //-------------bin_data -> (minSquare) -> filtred_data-------------
-//    cout<<"bin_data -> (minSquare) -> filtred_data"<<endl;
+    cout<<"bin_data -> (minSquare) -> filtred_data"<<endl;
+    switch (method) {
+    case ThirdMoment:
+        binVal = 0;
+        break;
+    case DesctiptorR:
+        binVal = 0;
+        break;
+    case Uniformity:
+        binVal = 255;
+        break;
+    case Entropy:
+        binVal = 255;
+        break;
+    case StandardDeviation:
+        binVal = 0;
+        break;
+    case Mean:
+        binVal = 0;
+        break;
+    }
 
-//    cout<<" labeling(bin_data, labels, 0);"<<endl;
-    Data2d<int>* labels = new Data2d<int>(bin_data->width(), bin_data->height(), 1);
-    int l = labeling(bin_data, labels, 0);
-//    cout<<" dropRegions(labels, filtred_data)"<<endl;
+    cout<<" labeling(bin_data, labels, 0);"<<endl;
+    Data2d<int>* labels = new Data2d<int>(width, height, 1);
+    int l = labeling(bin_data, labels, binVal);
+    cout<<" dropRegions(labels, filtred_data)"<<endl;
     dropRegions(labels, filtred_data, l, minSquare, multithread);
-    delete labels;
 //-----filtred_data -> Morphology Edge Detection -> edge_data------
     ImgData* edge_data = new ImgData(*filtred_data);
     Filter::filter(filtred_data, edge_data, Morphology);
 //--------------filtred_data -> (src_data) -> out_data-------------
-//    cout<<"filtred_data -> (src_data) -> out_data"<<endl;
+    cout<<"filtred_data -> (src_data) -> out_data"<<endl;
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
             if(*(*filtred_data)(x, y, 0) == 255) {
@@ -258,148 +290,33 @@ void Segmentation::segmentation(ImgData* src_data,
         }
     }
 
-
-}
-
-void Segmentation::segmentation(ImgData* src,
-                                ImgData* dst,
-                                Statistic method,
-                                int mask_size,
-                                bool loc_hist,
-                                bool multithread)
-{
-    unsigned int nthreads = multithread ? std::thread::hardware_concurrency() : 1;
-    std::cout<<"nthreads: "<<nthreads<<std::endl;
-
-    // vars
-    float               val;
-    float min = FLT_MAX,
-          max = FLT_MIN;
-    float m,
-            variance;
-    int tid;
-    int width = src->width(),
-        height = src->height();
-
-    float**             h     = loc_hist ? new float*[nthreads] : new float*[1];
-    Data2d<uint8_t>**   sub   = new Data2d<uint8_t>*[nthreads];
-
-    for(int i = 0; i < nthreads; i++) {
-        sub[i] = new Data2d<uint8_t>(mask_size, mask_size, 1);
-        if(loc_hist)
-            h[i] = new float[256];
-    }
-    if(!loc_hist)
-        h[0] = new float[256];
-
-    ImgData*            inp_data    = new ImgData(*src);
-    Data2d<float>*      stat_data   = new Data2d<float>(src->width(), src->height(), 1);
-    // operations
-
-
-    Filter::filter(inp_data, inp_data, Gray);                               // input to gray
-    if(!loc_hist)
-        hist(src, h[0]);
-
-    #pragma omp parallel num_threads(nthreads)
-    {
-        #pragma omp for private(tid) private(variance) private(m) private(val) schedule(dynamic)
-            for(int x = 0; x < width; x++) {
-                for(int y = 0; y < height; y ++) {
-                    tid = omp_get_thread_num();                     // thread id
-
-                    subset(inp_data, sub[tid], x, y);               // get subset of image
-                    switch (method) {
-                    case ThirdMoment:
-                    {
-                        // 1 histogram -> h
-                        // 2 mean(h) -> m
-                        // 3 moment(h, m, 3) -> val
-                        if(loc_hist)
-                        {
-                            hist(sub[tid], h[tid]);
-                            m = mean(sub[tid]);
-//                            m = mean(h[tid]);
-                            val = moment(h[tid], m, 3);
-                        } else {
-                            m = mean(sub[tid]);
-//                            m = mean(h[0]);
-                            val = moment(h[0], m, 3);
-                        }
-                        break;
-                    }
-                    case DesctiptorR:
-                    {
-                        // 1 histogram -> h
-                        // 2 mean(h) -> m
-                        // 3 moment(h, m, 2) -> variance
-                        // R(variance) -> val
-
-                        if(loc_hist)
-                        {
-                            hist(sub[tid], h[tid]);
-                            m = mean(sub[tid]);
-//                            m = mean(h[tid]);
-                            variance = moment(h[tid], m, 2);
-                        } else {
-                            m = mean(sub[tid]);
-//                            m = mean(h[0]);
-                            variance = moment(h[0], m, 2);
-                        }
-                        val = R(variance);
-                        break;
-                    }
-                    }
-                    val = val >  250 ?  250 : val;
-                    val = val < -250 ? -250 : val;
-                    #pragma omp critical
-                    {
-                        if(val > max)
-                        {
-                            max = val;
-                        }
-                        if(val < min) {
-                            min = val;
-                        }
-                        *(*stat_data)(x, y, 0) = val;
-                    }
-            }
-        }
-    }
-    cout<<"max: "<<max<<" min: "<<min<<endl;
-                                                                       // normalize result
-    for(int x = 0; x < width; x++) {
-        for(int y = 0; y < height; y++) {
-            uint8_t res = norm(min, max, 0, 255, *(*stat_data)(x, y, 0));
-
-            for(int c = 0; c < dst->depth(); c++) {
-                *(*dst)(x, y, c) = res;
-            }
-        }
-    }
-    hist(dst, h[0]);
-    float T = kmeansThold(dst, 5);                                // set threshold
-
-    for(int x = 0; x < width; x++) {
-        for(int y = 0; y < height; y++) {
-            for(int c = 0; c < dst->depth(); c++) {
-                *(*dst)(x, y, c) = *(*dst)(x, y, c) > T ? 255 : 0;
-            }
-        }
-    }
+    delete stat_data_fp;
+    delete inp_data;
     for(int i = 0; i < nthreads; i++) {
         delete sub[i];
         delete h[i];
     }
     delete sub;
     delete h;
-
-    delete inp_data;
-    delete stat_data;
+    delete labels;
 }
 
 //----------------------------------------------------------------
 //http://www.lib.tpu.ru/fulltext/c/2010/C04/V1/C04_V1.pdf
+
+float  Segmentation::mean(ImgData* img) {
+    int w = img->width(),
+        h = img->height();
+    float m = 0.f,
+          n = w * h;
+    for(int x = 0; x < w; x++) {
+        for(int y = 0; y < h; y++) {
+            m += *(*img)(x, y, 0);
+        }
+    }
+    m /= n;
+    return m;
+}
 
 float  Segmentation::mean(Data2d<uint8_t>* img) {
     int w = img->width(),
@@ -473,7 +390,8 @@ float Segmentation::moment(float* h, float mean, int n) {
 
 
 float Segmentation::R(float variance) {
-    return 1.f - (1.f / (1.f + variance));
+    float L2 = 256 * 256;
+    return 1.f - (1.f / (1.f + variance / L2));
 }
 
 float Segmentation::U(float* h) {
@@ -484,6 +402,18 @@ float Segmentation::U(float* h) {
         u += h[i] * h[i];
     }
     return u;
+}
+
+float Segmentation::entropy(float* h) {
+    double e = 0.f;
+    int L = 256;
+
+    for(int i = 0; i < L; i++) {
+        if(h[0] > 0) {
+            e += h[i] * log2(h[i]);
+        }
+    }
+    return - e;
 }
 
 void Segmentation::subset(ImgData* src, Data2d<uint8_t>* sub, int center_x, int center_y) {
@@ -555,12 +485,13 @@ void Segmentation::subset(ImgData* src, Data2d<uint8_t>* sub, int center_x, int 
 }
 
 //----------------------------------------------------------------
-float Segmentation::kmeansThold(Data2d<uint8_t>* img, float eps_min) {
+float Segmentation::kmeansThold(Data2d<uint8_t>* img, float eps_min, bool multithread) {
     float eps = 256.f;
     float T = 127.f;
     float m1, m2;
 
     while(eps > eps_min) {
+        if(multithread) {
         #pragma omp parallel sections
         {
             #pragma omp section
@@ -588,8 +519,30 @@ float Segmentation::kmeansThold(Data2d<uint8_t>* img, float eps_min) {
                 m2 /= img->width() * img->height();
             }
         }
+        } else {
+            m1 = 0.f;
+            m2 = 0.f;
+            for(int x = 0; x < img->width(); x++) {
+                for(int y = 0; y < img->height(); y++) {
+                    if(*(*img)(x, y, 0) < T) {
+                        m1 += *(*img)(x, y, 0);
+                    }
+                }
+            }
+            for(int x = 0; x < img->width(); x++) {
+                for(int y = 0; y < img->height(); y++) {
+                    if(*(*img)(x, y, 0) >= T) {
+                        m2 += *(*img)(x, y, 0);
+                    }
+                }
+            }
+            m1 /= img->width() * img->height();
+            m2 /= img->width() * img->height();
+        }
         float bufT = (m1 + m2) / 2.f;
+        bufT = bufT > 255 ? 255 : bufT < 0 ? 0 : bufT;
         eps = abs(T - bufT);
+        cout<<"bufT: "<<bufT<<endl;
         T = bufT;
     }
     cout<<"T: "<<T<<endl;
@@ -597,12 +550,13 @@ float Segmentation::kmeansThold(Data2d<uint8_t>* img, float eps_min) {
 }
 
 
-float Segmentation::kmeansThold(ImgData *img, float eps_min) {
+float Segmentation::kmeansThold(ImgData *img, float eps_min, bool multithread) {
     float eps = 256.f;
     float T = 127.f;
     float m1, m2;
 
     while(eps > eps_min) {
+        if(multithread) {
         #pragma omp parallel sections
         {
             #pragma omp section
@@ -630,8 +584,30 @@ float Segmentation::kmeansThold(ImgData *img, float eps_min) {
                 m2 /= img->width() * img->height();
             }
         }
+        } else {
+            m1 = 0.f;
+            m2 = 0.f;
+            for(int x = 0; x < img->width(); x++) {
+                for(int y = 0; y < img->height(); y++) {
+                    if(*(*img)(x, y, 0) < T) {
+                        m1 += *(*img)(x, y, 0);
+                    }
+                }
+            }
+            for(int x = 0; x < img->width(); x++) {
+                for(int y = 0; y < img->height(); y++) {
+                    if(*(*img)(x, y, 0) >= T) {
+                        m2 += *(*img)(x, y, 0);
+                    }
+                }
+            }
+            m1 /= img->width() * img->height();
+            m2 /= img->width() * img->height();
+        }
         float bufT = (m1 + m2) / 2.f;
+        bufT = bufT > 255 ? 255 : bufT < 0 ? 0 : bufT;
         eps = abs(T - bufT);
+        cout<<"bufT: "<<bufT<<endl;
         T = bufT;
     }
     cout<<"T: "<<T<<endl;
