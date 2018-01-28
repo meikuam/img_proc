@@ -1,6 +1,62 @@
 #include "segmentation.h"
 
 
+//int Segmentation::labeling(ImgData* img, Data2d<int>* labels) {
+//    int A, B, C;
+//    int cur = 1;
+
+//    for (int x = 0; x < img->height(); x++) {
+//        for (int y = 0; y < img->width(); y++) {
+//            *(*labels)(x, y, 0) = *(*img)(x, y, 0);
+//        }
+//    }
+//    for (int x = 0; x < labels->width(); x++) {
+//        for (int y = 0; y < labels->height(); y++) {
+//            int kn = y - 1;
+//            if (kn < 0) {
+//                B = 0;
+//            } else {
+//                B = *(*labels)(x, kn, 0);
+//                int km = x - 1;
+//                if (km < 0) {
+//                    C = 0;
+//                } else {
+//                    C = *(*labels)(km, y, 0);
+//                    A = *(*labels)(x, y, 0);
+//                    if (A == 1){
+//                        if (B == 0 && C == 0) {
+//                            cur++;
+//                            *(*labels)(x, y, 0) = cur;
+//                        } else if (B != 0 && C == 0) {
+//                            *(*labels)(x, y, 0) = B;
+//                        } else if (B == 0 && C != 0) {
+//                            *(*labels)(x, y, 0) = C;
+//                        } else if (B != 0 && C != 0) {
+//                            if (B == C) {
+//                                *(*labels)(x, y, 0) = B;
+//                            }else {
+//                                *(*labels)(x, y, 0) = B;
+//                                for (int i = 0; i <= x; i++) {
+//                                    for (int j = 0; j < labels->height(); j++) {
+//                                        if (i == x && j == y) break;
+//                                        if (*(*labels)(i, j) == C)
+//                                            *(*labels)(i, j) = B;
+//                                    }
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
+//    return cur;
+//}
+
+
+
+
+
 void Segmentation::dropRegions(Data2d<int>* src, ImgData* dst, int regions, int minSquare, bool multithread) {
 //    cout<<"dropRegions:  square calc.";
     unsigned int nthreads = multithread ? std::thread::hardware_concurrency() : 1;
@@ -228,7 +284,7 @@ void Segmentation::segmentation(ImgData* src_data,
     //TODO: ручное задание порога бинаризации и другие методы
     cout<<"stat_data -> threshold -> bin_data"<<endl;
     hist(stat_data, h[0]);
-    float T = kmeansThold(stat_data, 0, multithread);                   // set threshold
+    float T = kmeansThold(stat_data, 10, multithread);                   // set threshold
 
     for(int x = 0; x < width; x++) {
         for(int y = 0; y < height; y++) {
@@ -239,12 +295,16 @@ void Segmentation::segmentation(ImgData* src_data,
     }
 //-------------bin_data -> (minSquare) -> filtred_data-------------
     cout<<"bin_data -> (minSquare) -> filtred_data"<<endl;
+    //feature
     switch (method) {
     case ThirdMoment:
         binVal = 0;
         break;
     case DesctiptorR:
-        binVal = 0;
+        if(useLocalHist)
+            binVal = 0;
+        else
+            binVal = 255;
         break;
     case Uniformity:
         binVal = 255;
@@ -253,7 +313,10 @@ void Segmentation::segmentation(ImgData* src_data,
         binVal = 255;
         break;
     case StandardDeviation:
-        binVal = 0;
+        if(useLocalHist)
+            binVal = 0;
+        else
+            binVal = 255;
         break;
     case Mean:
         binVal = 0;
@@ -263,6 +326,7 @@ void Segmentation::segmentation(ImgData* src_data,
     cout<<" labeling(bin_data, labels, 0);"<<endl;
     Data2d<int>* labels = new Data2d<int>(width, height, 1);
     int l = labeling(bin_data, labels, binVal);
+//    *filtred_data = *bin_data;
     cout<<" dropRegions(labels, filtred_data)"<<endl;
     dropRegions(labels, filtred_data, l, minSquare, multithread);
 //-----filtred_data -> Morphology Edge Detection -> edge_data------
@@ -302,7 +366,6 @@ void Segmentation::segmentation(ImgData* src_data,
 }
 
 //----------------------------------------------------------------
-//http://www.lib.tpu.ru/fulltext/c/2010/C04/V1/C04_V1.pdf
 
 float  Segmentation::mean(ImgData* img) {
     int w = img->width(),

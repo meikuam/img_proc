@@ -1,5 +1,5 @@
 # img_proc
-lab3
+lab5
 
 You can translate from one color space to another:
 
@@ -17,3 +17,8 @@ Morphological operations
 and hit-or-miss search
 
 ![MainWindow](https://4.downloader.disk.yandex.ru/preview/99a67705c7c09d5e538b83069bfc8449f7ea30e6a91ee95d504fcd562ac6a649/inf/vtUgEyRc8ccAmjWRiiI8IqOtF4YJpdHrGMHb0qE2AogQP0Aer8vVzEWwTiyTPt7v-fbBAvoQKrpaovCVAtwT8w%3D%3D?uid=0&filename=2018-01-19%2009-04-32%20MainWindow.png&disposition=inline&hash=&limit=0&content_type=image%2Fpng&tknv=v2&size=XXL&crop=0)
+
+
+Use statistics for segmentation
+
+![MainWindow](https://4.downloader.disk.yandex.ru/preview/78cf7459b2142cf7a6a4a6c03f89a3ebe80d2c5c54f0ff575833365d9c0ff455/inf/vtUgEyRc8ccAmjWRiiI8IoibCAhUYqM4c466FBOFEMacIqEcqAD0YvfWHqpSCI0J4oCjRyDpW-ZFlrkLCjP53g%3D%3D?uid=0&filename=out%203%20minsq8000%20lochist.jpg&disposition=inline&hash=&limit=0&content_type=image%2Fjpeg&tknv=v2&size=XXL&crop=0)

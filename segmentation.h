@@ -33,7 +33,7 @@ class Segmentation {
 
     static bool Fill(ImgData* img, Data2d<int>* labels, int x, int y, int L, int val);
     static int labeling(ImgData* img, Data2d<int>* labels, int val);
-
+//    static int labeling(ImgData* img, Data2d<int>* labels);
     //----------------------------------------------------------------
 
     static  float   mean(ImgData* img);
